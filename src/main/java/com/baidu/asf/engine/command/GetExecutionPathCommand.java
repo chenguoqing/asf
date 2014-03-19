@@ -1,6 +1,6 @@
 package com.baidu.asf.engine.command;
 
-import com.baidu.asf.engine.ExecutionTracingNode;
+import com.baidu.asf.engine.ExecutionPathNode;
 import com.baidu.asf.engine.ProcessorContext;
 import com.baidu.asf.model.ActType;
 import com.baidu.asf.persistence.enitity.TransitionEntity;
@@ -12,9 +12,9 @@ import java.util.Map;
 /**
  * Find the execution path for current instance
  */
-public class GetExecutionPathCommand implements Command<ExecutionTracingNode> {
+public class GetExecutionPathCommand implements Command<ExecutionPathNode> {
     @Override
-    public ExecutionTracingNode execute(ProcessorContext context) {
+    public ExecutionPathNode execute(ProcessorContext context) {
         List<TransitionEntity> transitionEntities = context.getEntityManager().findTransitions(context.getInstance()
                 .getId());
 
@@ -22,11 +22,11 @@ public class GetExecutionPathCommand implements Command<ExecutionTracingNode> {
             return null;
         }
         String startEventId = transitionEntities.get(0).getFromActFullPath();
-        Map<String, ExecutionTracingNode> executionNodeMap = new HashMap<String, ExecutionTracingNode>();
+        Map<String, ExecutionPathNode> executionNodeMap = new HashMap<String, ExecutionPathNode>();
 
         for (TransitionEntity entity : transitionEntities) {
-            ExecutionTracingNode from = getAndCreate(entity.getFromActFullPath(), executionNodeMap);
-            ExecutionTracingNode to = getAndCreate(entity.getToActFullPath(), executionNodeMap);
+            ExecutionPathNode from = getAndCreate(entity.getFromActFullPath(), executionNodeMap);
+            ExecutionPathNode to = getAndCreate(entity.getToActFullPath(), executionNodeMap);
 
             // remove the virtual connection(from EndEvent of sub process to SubProcess)
             if (entity.getFromActType() != ActType.EndEvent || !entity.isVirtualFlow()) {
@@ -37,11 +37,11 @@ public class GetExecutionPathCommand implements Command<ExecutionTracingNode> {
         return executionNodeMap.get(startEventId);
     }
 
-    private ExecutionTracingNode getAndCreate(String actFullId, Map<String, ExecutionTracingNode> executionNodeMap) {
-        ExecutionTracingNode node = executionNodeMap.get(actFullId);
+    private ExecutionPathNode getAndCreate(String actFullId, Map<String, ExecutionPathNode> executionNodeMap) {
+        ExecutionPathNode node = executionNodeMap.get(actFullId);
 
         if (node == null) {
-            node = new ExecutionTracingNode(actFullId);
+            node = new ExecutionPathNode(actFullId);
             executionNodeMap.put(actFullId, node);
         }
         return node;

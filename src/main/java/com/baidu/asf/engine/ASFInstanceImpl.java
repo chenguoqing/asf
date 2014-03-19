@@ -97,7 +97,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
     }
 
     @Override
-    public ExecutionTracingNode getExecutionPath() {
+    public ExecutionPathNode getExecutionPath() {
         ProcessorContextImpl context = new ProcessorContextImpl(definition, this, entityManager, null);
         return executor.execute(context, new GetExecutionPathCommand());
     }

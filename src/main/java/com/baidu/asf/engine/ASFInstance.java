@@ -54,7 +54,7 @@ public interface ASFInstance extends VariableContext, SystemVariableContext {
     /**
      * Retrieve the execution path of current doOutgoing,it will back the execution path until to StartEvent
      */
-    ExecutionTracingNode getExecutionPath();
+    ExecutionPathNode getExecutionPath();
 
     /**
      * Transit the flow to nodeId nodeId,all outgoing flows will be evaluated, one of true will be selected.
