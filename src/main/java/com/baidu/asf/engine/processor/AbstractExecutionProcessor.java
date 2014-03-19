@@ -44,9 +44,9 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
         // save transition history
         TransitionEntity transitionEntity = new TransitionEntity();
         transitionEntity.setInstanceId(context.getInstance().getId());
-        transitionEntity.setFromActFullPath(from.getFullPath());
+        transitionEntity.setFromActFullId(from.getFullPath());
         transitionEntity.setFromActType(from.getType());
-        transitionEntity.setToActFullPath(context.getNode().getFullPath());
+        transitionEntity.setToActFullId(context.getNode().getFullPath());
         transitionEntity.setToActType(context.getNode().getType());
         transitionEntity.setFlowId(flow.getId());
         transitionEntity.setVirtualFlow(flow.isVirtual());

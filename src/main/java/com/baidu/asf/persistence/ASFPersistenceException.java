@@ -3,15 +3,15 @@ package com.baidu.asf.persistence;
 import com.baidu.asf.ASFException;
 
 /**
- * {@link PersistenceException} represents a common persist error
+ * {@link ASFPersistenceException} represents a common persist error
  */
-public class PersistenceException extends ASFException {
+public class ASFPersistenceException extends ASFException {
     /**
      * Constructs a new runtime exception with {@code null} as its
      * detail message.  The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
      */
-    public PersistenceException() {
+    public ASFPersistenceException() {
         super();
     }
 
@@ -23,7 +23,7 @@ public class PersistenceException extends ASFException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public PersistenceException(String message) {
+    public ASFPersistenceException(String message) {
         super(message);
     }
 
@@ -41,7 +41,7 @@ public class PersistenceException extends ASFException {
      *                unknown.)
      * @since 1.4
      */
-    public PersistenceException(String message, Throwable cause) {
+    public ASFPersistenceException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -58,7 +58,7 @@ public class PersistenceException extends ASFException {
      *              unknown.)
      * @since 1.4
      */
-    public PersistenceException(Throwable cause) {
+    public ASFPersistenceException(Throwable cause) {
         super(cause);
     }
 }

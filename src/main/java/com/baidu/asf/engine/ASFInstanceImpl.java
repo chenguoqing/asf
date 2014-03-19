@@ -1,20 +1,19 @@
 package com.baidu.asf.engine;
 
 import com.baidu.asf.ASFException;
+import com.baidu.asf.engine.command.Command;
 import com.baidu.asf.engine.command.CommandExecutor;
 import com.baidu.asf.engine.command.CompleteCommand;
 import com.baidu.asf.engine.command.GetExecutionPathCommand;
-import com.baidu.asf.engine.processor.ExecutionProcessor;
 import com.baidu.asf.model.ASFDefinition;
-import com.baidu.asf.model.ActType;
 import com.baidu.asf.model.Node;
 import com.baidu.asf.model.UserTask;
 import com.baidu.asf.persistence.EntityManager;
+import com.baidu.asf.persistence.MVCCException;
 import com.baidu.asf.persistence.enitity.ExecutionEntity;
 import com.baidu.asf.persistence.enitity.InstanceEntity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +22,6 @@ import java.util.Map;
  */
 public class ASFInstanceImpl extends AbstractVariableContext implements ASFInstance {
 
-    private static final Map<ActType, ExecutionProcessor> processors = new HashMap<ActType, ExecutionProcessor>();
     /**
      * Unique id
      */
@@ -42,10 +40,6 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
     private final InstanceEntity instanceEntity;
 
     private final CommandExecutor executor;
-    /**
-     * Process status
-     */
-    private ASFStatus status;
 
     public ASFInstanceImpl(long id, ASFDefinition definition, EntityManager entityManager, CommandExecutor executor) {
         this.id = id;
@@ -67,7 +61,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
 
     @Override
     public ASFStatus getStatus() {
-        return status;
+        return ASFStatus.get(instanceEntity.getStatus());
     }
 
 
@@ -93,7 +87,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
     }
 
     private <T extends Node> T findActElement(ExecutionEntity entity) {
-        return (T) definition.findNode(entity.getActFullPath());
+        return (T) definition.findNode(entity.getActFullId());
     }
 
     @Override
@@ -109,7 +103,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
 
     @Override
     public void complete(long executionTaskId, Map<String, Object> variables) {
-        if (status != ASFStatus.ACTIVE) {
+        if (instanceEntity.getStatus() != ASFStatus.ACTIVE.value) {
             throw new ASFStatusException("Can't flow a non-active doOutgoing.");
         }
         // save variables
@@ -118,10 +112,10 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         ExecutionEntity executionEntity = entityManager.loadExecution(executionTaskId);
         UserTask node = findActElement(executionEntity);
 
-        ASFDefinition def = definition.getSubDefinition(executionEntity.getActFullPath());
+        ASFDefinition def = definition.getSubDefinition(executionEntity.getActFullId());
 
         if (def == null) {
-            throw new ASFException("Not found the process definition :" + executionEntity.getActFullPath());
+            throw new ASFException("Not found the process definition :" + executionEntity.getActFullId());
         }
 
         ProcessorContextImpl context = new ProcessorContextImpl(def, this, entityManager, node);
@@ -132,21 +126,37 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
 
     @Override
     public void pause() {
-        if (status != ASFStatus.ACTIVE) {
+        if (instanceEntity.getStatus() != ASFStatus.ACTIVE.value) {
             throw new ASFStatusException("Can't pause a non-active doOutgoing.");
         }
-        this.status = ASFStatus.SUSPEND;
         instanceEntity.setStatus(ASFStatus.SUSPEND.value);
-        entityManager.updateASFInstanceStatus(instanceEntity);
+
+        executeUpdateInstanceStatus();
     }
 
     @Override
     public void resume() {
-        if (status != ASFStatus.ACTIVE) {
+        if (instanceEntity.getStatus() != ASFStatus.ACTIVE.value) {
             throw new ASFStatusException("Can't resume a non-suspend doOutgoing.");
         }
         instanceEntity.setStatus(ASFStatus.ACTIVE.value);
-        this.status = ASFStatus.ACTIVE;
+
+        executeUpdateInstanceStatus();
+    }
+
+    private void executeUpdateInstanceStatus() {
+        ProcessorContextImpl context = new ProcessorContextImpl(definition, this, entityManager, null);
+        try {
+            executor.execute(context, new Command<Void>() {
+                @Override
+                public Void execute(ProcessorContext context) {
+                    entityManager.updateASFInstanceStatus(instanceEntity);
+                    return null;
+                }
+            });
+        } catch (MVCCException e) {
+            throw new ASFConcurrentModificationException(this, "Failed to update status to " + instanceEntity.getStatus());
+        }
     }
 
     @Override

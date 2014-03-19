@@ -7,7 +7,7 @@ public class VariableEntity extends Entity {
     /**
      * Variable type
      */
-    static enum VariableType {
+    public static enum VariableType {
         STRING(0),
         LONG(1),
         DOUBLE(2),
@@ -19,7 +19,7 @@ public class VariableEntity extends Entity {
             this.value = value;
         }
 
-        static VariableType get(int value) {
+        public static VariableType get(int value) {
             if (value < STRING.value || value > OBJECT.value) {
                 throw new IllegalArgumentException("Invalidate value:" + value);
             }
@@ -119,7 +119,7 @@ public class VariableEntity extends Entity {
         return lValue;
     }
 
-    public void seLong(Long lValue) {
+    public void setLong(Long lValue) {
         this.lValue = lValue;
     }
 

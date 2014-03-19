@@ -13,7 +13,7 @@ public class ExecutionEntity extends Entity {
     /**
      * Node nodeId id
      */
-    private String actFullPath;
+    private String actFullId;
     /**
      * Current nodeId type
      */
@@ -30,12 +30,12 @@ public class ExecutionEntity extends Entity {
         this.instanceId = instanceId;
     }
 
-    public String getActFullPath() {
-        return actFullPath;
+    public String getActFullId() {
+        return actFullId;
     }
 
-    public void setActFullPath(String actFullPath) {
-        this.actFullPath = actFullPath;
+    public void setActFullId(String actFullId) {
+        this.actFullId = actFullId;
     }
 
     public ActType getActType() {

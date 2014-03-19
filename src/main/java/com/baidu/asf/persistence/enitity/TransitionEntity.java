@@ -13,11 +13,11 @@ public class TransitionEntity extends Entity {
     /**
      * From act id
      */
-    private String fromActFullPath;
+    private String fromActFullId;
     /**
      * To act id
      */
-    private String toActFullPath;
+    private String toActFullId;
     /**
      * Flow id
      */
@@ -43,20 +43,20 @@ public class TransitionEntity extends Entity {
         this.instanceId = instanceId;
     }
 
-    public String getFromActFullPath() {
-        return fromActFullPath;
+    public String getFromActFullId() {
+        return fromActFullId;
     }
 
-    public void setFromActFullPath(String fromActFullPath) {
-        this.fromActFullPath = fromActFullPath;
+    public void setFromActFullId(String fromActFullId) {
+        this.fromActFullId = fromActFullId;
     }
 
-    public String getToActFullPath() {
-        return toActFullPath;
+    public String getToActFullId() {
+        return toActFullId;
     }
 
-    public void setToActFullPath(String toActFullPath) {
-        this.toActFullPath = toActFullPath;
+    public void setToActFullId(String toActFullId) {
+        this.toActFullId = toActFullId;
     }
 
     public String getFlowId() {

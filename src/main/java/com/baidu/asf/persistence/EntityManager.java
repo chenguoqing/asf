@@ -15,7 +15,7 @@ public interface EntityManager {
      * Create a doOutgoing instance,if success the new entity id will be set to {@link sun.security.jca.GetInstance
      * .Instance.setId()}
      *
-     * @throws com.baidu.asf.persistence.PersistenceException any persistence error
+     * @throws ASFPersistenceException any persistence error
      */
     void createASFInstance(InstanceEntity instanceEntity);
 
@@ -33,15 +33,15 @@ public interface EntityManager {
     /**
      * Update the status of doOutgoing instance
      *
-     * @throws com.baidu.asf.persistence.PersistenceException any persistence error
-     * @throws com.baidu.asf.persistence.MVCCException        if the version conflicted
+     * @throws ASFPersistenceException                 any persistence error
+     * @throws com.baidu.asf.persistence.MVCCException if the version conflicted
      */
     void updateASFInstanceStatus(InstanceEntity instanceEntity);
 
     /**
      * Create a execution entity, the new execution id will be set to {@link com.baidu.asf.persistence.enitity.ExecutionEntity} if success
      *
-     * @throws com.baidu.asf.persistence.PersistenceException any persistence error
+     * @throws ASFPersistenceException any persistence error
      */
     void createExecution(ExecutionEntity executionEntity);
 
@@ -55,8 +55,8 @@ public interface EntityManager {
     /**
      * Remove the execution entity by id
      *
-     * @throws com.baidu.asf.persistence.PersistenceException any persistence error
-     * @throws com.baidu.asf.persistence.MVCCException        if the version conflicted
+     * @throws ASFPersistenceException                 any persistence error
+     * @throws com.baidu.asf.persistence.MVCCException if the version conflicted
      */
     void removeExecution(long id);
 
@@ -73,7 +73,7 @@ public interface EntityManager {
     /**
      * Create transition entity, the new transition id will be set to {@link com.baidu.asf.persistence.enitity.TransitionEntity} if success
      *
-     * @throws com.baidu.asf.persistence.PersistenceException any persistence error
+     * @throws ASFPersistenceException any persistence error
      */
     void createTransition(TransitionEntity transitionEntity);
 
@@ -85,7 +85,7 @@ public interface EntityManager {
     /**
      * Create a variable entity, this will not be protected by MVCC
      *
-     * @throws com.baidu.asf.persistence.PersistenceException any persistence error
+     * @throws ASFPersistenceException any persistence error
      */
     void createVariable(VariableEntity variable);
 
@@ -103,14 +103,14 @@ public interface EntityManager {
     /**
      * Update the variable to new value if the variable is exist,otherwise, create it.
      *
-     * @throws com.baidu.asf.persistence.PersistenceException any persistence error
+     * @throws ASFPersistenceException any persistence error
      */
     void updateVariable(VariableEntity variable);
 
     /**
      * Remove the variable from doOutgoing instance identified by <tt>instanceId</tt>
      */
-    int removeVariable(long instanceId, String name, VariableEntity.VariableClass variableClass);
+    void removeVariable(long id, int version);
 
     /**
      * Remove all variables associated with doOutgoing instance <tt>instanceId</tt>

@@ -2,7 +2,6 @@ package com.baidu.asf.engine.command;
 
 import com.baidu.asf.engine.ExecutionPathNode;
 import com.baidu.asf.engine.ProcessorContext;
-import com.baidu.asf.model.ActType;
 import com.baidu.asf.persistence.enitity.TransitionEntity;
 
 import java.util.HashMap;
@@ -21,17 +20,13 @@ public class GetExecutionPathCommand implements Command<ExecutionPathNode> {
         if (transitionEntities == null) {
             return null;
         }
-        String startEventId = transitionEntities.get(0).getFromActFullPath();
+        String startEventId = transitionEntities.get(0).getFromActFullId();
         Map<String, ExecutionPathNode> executionNodeMap = new HashMap<String, ExecutionPathNode>();
 
         for (TransitionEntity entity : transitionEntities) {
-            ExecutionPathNode from = getAndCreate(entity.getFromActFullPath(), executionNodeMap);
-            ExecutionPathNode to = getAndCreate(entity.getToActFullPath(), executionNodeMap);
-
-            // remove the virtual connection(from EndEvent of sub process to SubProcess)
-            if (entity.getFromActType() != ActType.EndEvent || !entity.isVirtualFlow()) {
-                from.addSuccessor(entity.getFlowId(), to);
-            }
+            ExecutionPathNode from = getAndCreate(entity.getFromActFullId(), executionNodeMap);
+            ExecutionPathNode to = getAndCreate(entity.getToActFullId(), executionNodeMap);
+            from.addSuccessor(entity.getFlowId(), to);
         }
 
         return executionNodeMap.get(startEventId);
