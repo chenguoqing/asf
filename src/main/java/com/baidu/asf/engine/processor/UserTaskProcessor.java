@@ -31,7 +31,7 @@ public class UserTaskProcessor extends AbstractExecutionProcessor {
         try {
             context.getEntityManager().removeExecution(context.getExecutionTaskId());
         } catch (MVCCException e) {
-            throw new ASFConcurrentModificationException();
+            throw new ASFConcurrentModificationException(context.getInstance());
         }
 
         // leave UserTask

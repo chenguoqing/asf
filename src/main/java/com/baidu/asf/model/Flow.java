@@ -1,6 +1,7 @@
 package com.baidu.asf.model;
 
 import com.baidu.asf.engine.VariableContext;
+import com.baidu.asf.expression.ConditionExpression;
 
 /**
  * {@link com.baidu.asf.model.Flow} is a connection be nodes between nodes,it may be a real connection(that can be
@@ -19,5 +20,5 @@ public interface Flow extends ActElement {
      */
     void setConditionExpression(ConditionExpression expression);
 
-    boolean evaluate(VariableContext scope);
+    boolean evaluate(VariableContext context);
 }

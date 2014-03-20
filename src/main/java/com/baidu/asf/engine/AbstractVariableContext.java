@@ -21,6 +21,9 @@ public abstract class AbstractVariableContext implements VariableContext, System
 
     @Override
     public void setVariables(Map<String, Object> variables) {
+        if (variables == null) {
+            return;
+        }
         for (Iterator<String> it = variables.keySet().iterator(); it.hasNext(); ) {
             String name = it.next();
             Object value = variables.get(name);

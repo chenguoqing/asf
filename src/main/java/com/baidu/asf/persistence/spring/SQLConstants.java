@@ -107,7 +107,8 @@ public class SQLConstants {
     /**
      * Delete variable
      */
-    public static final String ASF_DELETE_VARIABLE = "DELETE ASF_VARIABLE WHERE ID_=? AND VERSION_=?";
+    public static final String ASF_DELETE_VARIABLE = "DELETE ASF_VARIABLE WHERE INSTANCE_ID_=? AND NAME_=? AND " +
+            "CLASS_=?";
 
     public static final String ASF_FIND_VARIABLES = "SELECT ID_,INSTANCE_ID_,NAME_,DOUBLE_,LONG_,STRING_,OBJECT_," +
             "TYPE_,CLASS_,VERSION_,GMT_CREATED,GMT_MODIFIED FROM ASF_VARIABLE WHERE INSTANCE_ID_=?";

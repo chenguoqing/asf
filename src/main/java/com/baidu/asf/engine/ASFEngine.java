@@ -22,5 +22,5 @@ public interface ASFEngine {
     /**
      * Load doOutgoing instance by id
      */
-    ASFInstance findASFInstance(Class<? extends ASFDefinition> definitionClass, long id);
+    ASFInstance findASFInstance(long id);
 }

@@ -378,12 +378,12 @@ public class SpringJdbcEntityManager implements EntityManager {
     }
 
     @Override
-    public void removeVariable(long id, int version) {
+    public void removeVariable(long instanceId, String name, VariableEntity.VariableClass variableClass) {
         try {
-            int count = jdbcTemplate.update(SQLConstants.ASF_DELETE_VARIABLE, id, version);
+            int count = jdbcTemplate.update(SQLConstants.ASF_DELETE_VARIABLE, instanceId, name, variableClass.value);
 
             if (count == 0) {
-                throw new MVCCException(null, version);
+                throw new MVCCException(null, 0);
             }
         } catch (DataAccessException e) {
             throw new ASFPersistenceException("Failed to delete variable.", e);

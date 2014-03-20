@@ -110,7 +110,7 @@ public interface EntityManager {
     /**
      * Remove the variable from doOutgoing instance identified by <tt>instanceId</tt>
      */
-    void removeVariable(long id, int version);
+    void removeVariable(long instanceId, String name, VariableEntity.VariableClass variableClass);
 
     /**
      * Remove all variables associated with doOutgoing instance <tt>instanceId</tt>

@@ -11,6 +11,9 @@ public abstract class AbstractElement implements ActElement {
     private String description;
 
     protected AbstractElement(String id, ActType actType) {
+        if (id != null && id.contains("/")) {
+            throw new IllegalArgumentException();
+        }
         this.id = id;
         this.actType = actType;
     }

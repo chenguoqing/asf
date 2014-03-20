@@ -1,6 +1,7 @@
 package com.baidu.asf.model;
 
 import com.baidu.asf.engine.VariableContext;
+import com.baidu.asf.expression.ConditionExpression;
 
 /**
  * Sequence flow
