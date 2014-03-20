@@ -21,7 +21,7 @@ public class InclusiveGatewayProcessor extends AbstractAutoExecutionProcessor {
         if (predecessors.size() == 1) {
             doOutgoing(context);
         } else {
-            String variableName = context.getNode().getFullPath() + VARIABLE_JOIN_NODE_COUNT;
+            String variableName = context.getNode().getFullId() + VARIABLE_JOIN_NODE_COUNT;
 
             Integer count = context.getInstance().incrementAndGet(variableName);
 

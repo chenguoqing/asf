@@ -11,15 +11,10 @@ import java.util.Map;
  * Common implementation for Node,implementations should driven from this class
  */
 public abstract class AbstractNode extends AbstractElement implements Node {
-    protected final Node parent;
+    protected Node parent;
     protected final List<ExecutionListener> listeners = new ArrayList<ExecutionListener>();
     private Map<Flow, Node> successors = new HashMap<Flow, Node>();
     private Map<String, Node> predecessors = new HashMap<String, Node>();
-
-    protected AbstractNode(String id, ActType actType, Node parent) {
-        super(id, actType);
-        this.parent = parent;
-    }
 
     @Override
     public void addSuccessor(Flow flow, Node successor) {
@@ -51,15 +46,19 @@ public abstract class AbstractNode extends AbstractElement implements Node {
         return listeners.toArray(new ExecutionListener[0]);
     }
 
-    @Override
-    public Node getParent() {
-        return null;
+    public void setParent(Node parent) {
+        this.parent = parent;
     }
 
     @Override
-    public String getFullPath() {
+    public Node getParent() {
+        return parent;
+    }
+
+    @Override
+    public String getFullId() {
         StringBuilder builder = new StringBuilder();
-        builder.append(id);
+        builder.append(getId());
 
         Node parent = this.parent;
 

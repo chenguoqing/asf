@@ -16,7 +16,7 @@ public interface Node extends ActElement {
     /**
      * Full path is the split with "/",each of entry of "/" is parent nodeId id
      */
-    String getFullPath();
+    String getFullId();
 
     /**
      * Add successor

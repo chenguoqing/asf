@@ -83,6 +83,9 @@ public class ASFEngineImpl implements ASFEngine {
                     throw new ASFException(e);
                 }
 
+                if (definition.getVersion() != entity.getDefVersion()) {
+                    throw new ASFException("Incompatible definition version.");
+                }
                 ASFInstance instance = new ASFInstanceImpl(entity.getId(), definition, entityManager, executor);
                 return instance;
             }

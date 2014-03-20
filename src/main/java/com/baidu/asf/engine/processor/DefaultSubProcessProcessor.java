@@ -42,7 +42,7 @@ public class DefaultSubProcessProcessor extends AbstractExecutionProcessor imple
 
     @Override
     public void endSubProcess(ProcessorContext subContext) {
-        String fullPath = subContext.getDefinition().getStartEvent().getFullPath();
+        String fullPath = subContext.getDefinition().getStartEvent().getFullId();
         int index = fullPath.lastIndexOf("/");
         String subProcessFullPath = fullPath.substring(0, index);
         Node node = subContext.getInstance().getDefinition().findNode(subProcessFullPath);

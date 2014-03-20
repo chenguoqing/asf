@@ -5,22 +5,14 @@ package com.baidu.asf.model;
  */
 public abstract class AbstractElement implements ActElement {
 
-    public final String id;
-    public final ActType actType;
+    private String id;
+    private ActType actType;
     private String name;
     private String description;
 
-    protected AbstractElement(String id, ActType actType) {
-        if (id != null && id.contains("/")) {
-            throw new IllegalArgumentException();
-        }
-        this.id = id;
-        this.actType = actType;
-    }
-
     @Override
     public void setId(String id) {
-        throw new IllegalArgumentException("Forbidden!");
+        this.id = id;
     }
 
     @Override
@@ -46,6 +38,10 @@ public abstract class AbstractElement implements ActElement {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    public void setActType(ActType actType) {
+        this.actType = actType;
     }
 
     @Override

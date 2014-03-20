@@ -1,16 +1,12 @@
 package com.baidu.asf.model;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
  * Adverse state flow doOutgoing definition
  */
-public interface ASFDefinition {
-    /**
-     * Return the identified definition name
-     */
-    String getName();
-
+public interface ASFDefinition extends ActElement {
     /**
      * Retrieve the definition modified version
      */
@@ -41,7 +37,18 @@ public interface ASFDefinition {
      */
     ASFDefinition getParent();
 
-    ASFDefinition getSubDefinition(String subNodeFullPath);
+    /**
+     * Retrieve sub definition
+     */
+    ASFDefinition getSubDefinition(String subDefinitionId);
 
+    /**
+     * Retrieve all sub definitions
+     */
     Map<String, ASFDefinition> getSubDefinitions();
+
+    /**
+     * Build definition
+     */
+    void build() throws IOException;
 }

@@ -1,7 +1,10 @@
 package com.baidu.asf.model;
 
 /**
- * Created by chenguoqing01 on 14-3-2.
+ * StartEvent
  */
-public interface StartEvent extends Event {
+public class StartEvent extends AbstractNode implements Event {
+    public StartEvent() {
+
+    }
 }
