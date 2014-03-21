@@ -1,7 +1,11 @@
 package com.baidu.asf.model;
 
 /**
- * Created by chenguoqing01 on 14-3-2.
+ * InclusiveGateway
  */
-public interface InclusiveGateway extends Gateway {
+public class InclusiveGateway extends AbstractNode implements Gateway {
+    public InclusiveGateway(Node parent) {
+        setActType(ActType.InclusiveGateway);
+        setParent(parent);
+    }
 }

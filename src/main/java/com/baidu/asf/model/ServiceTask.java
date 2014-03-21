@@ -1,7 +1,11 @@
 package com.baidu.asf.model;
 
 /**
- * Created by chenguoqing01 on 14-3-2.
+ * Service task
  */
-public class ServiceTask {
+public class ServiceTask extends AbstractNode implements Task {
+    public ServiceTask(Node parent) {
+        setActType(ActType.ServiceTask);
+        setParent(parent);
+    }
 }

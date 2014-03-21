@@ -1,7 +1,11 @@
 package com.baidu.asf.model;
 
 /**
- * Created by chenguoqing01 on 14-3-2.
+ * User task
  */
-public interface UserTask extends Task {
+public class UserTask extends AbstractNode implements Task {
+    public UserTask(Node parent) {
+        setActType(ActType.UserTask);
+        setParent(parent);
+    }
 }

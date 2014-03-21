@@ -1,9 +1,8 @@
 package com.baidu.asf.model.xml;
 
-import com.baidu.asf.model.ASFModelParserException;
-import com.baidu.asf.model.AbstractASFDefinition;
-import com.baidu.asf.model.ActElement;
-import com.baidu.asf.model.StartEvent;
+import com.baidu.asf.engine.ExecutionListener;
+import com.baidu.asf.expression.JEXLConditionExpression;
+import com.baidu.asf.model.*;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -14,7 +13,7 @@ import java.io.InputStream;
 import java.util.Stack;
 
 /**
- * Created by chenguoqing01 on 14-3-20.
+ * XML implementation
  */
 public class XMLDefinition extends AbstractASFDefinition {
 
@@ -29,17 +28,34 @@ public class XMLDefinition extends AbstractASFDefinition {
     public static final String ELEMENT_EXCLUSIVE_GATEWAY = "exclusiveGateway";
     public static final String ELEMENT_INCLUSIVE_GATEWAY = "inclusiveGateway";
     public static final String ELEMENT_FLOW = "flow";
+    public static final String ELEMENT_CONDITION = "condition";
     public static final String ELEMENT_SUBPROCESS = "subProcess";
+
+    public static final String ATTR_ID = "id";
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_DESCRIPTION = "description";
+    public static final String ATTR_VERSION = "version";
+    public static final String ATTR_LISTENER = "listener";
+    public static final String ATTR_CLASS = "class";
+    public static final String ATTR_SOURCE_REF = "sourceRef";
+    public static final String ATTR_TARGET_REF = "targetRef";
+    public static final String ATTR_EXPRESSION = "expression";
 
     private final String resourcePath;
 
-    private Stack<XMLDefinition> definitionStack = new Stack<XMLDefinition>();
+    private Stack<StackEntry> definitionStack = new Stack<StackEntry>();
 
     public XMLDefinition(String resourcePath) {
         if (resourcePath == null) {
             throw new IllegalArgumentException();
         }
         this.resourcePath = resourcePath;
+        setActType(ActType.Definition);
+    }
+
+    private XMLDefinition(XMLDefinition parent) {
+        this(parent.resourcePath);
+        setParent(parent);
     }
 
     @Override
@@ -58,10 +74,17 @@ public class XMLDefinition extends AbstractASFDefinition {
             throw new IOException("Not found the xml resource for path:" + resourcePath);
         }
 
-        parse(inputStream);
+        // parse xml stream to model
+        parseModel(inputStream);
+
+        // build and validate model
+        buildDefinition(this);
     }
 
-    public void parse(InputStream inputStream) {
+    /**
+     * Parse the xml stream to XMLDefinition instance
+     */
+    public void parseModel(InputStream inputStream) {
 
         SAXReader saxReader = new SAXReader();
 
@@ -69,7 +92,7 @@ public class XMLDefinition extends AbstractASFDefinition {
             Document document = saxReader.read(inputStream);
             Element root = document.getRootElement();
 
-            definitionStack.push(this);
+            definitionStack.push(new StackEntry(this, null));
             parseDefinition(root);
             parse(root);
         } catch (Exception e) {
@@ -77,6 +100,9 @@ public class XMLDefinition extends AbstractASFDefinition {
         }
     }
 
+    /**
+     * Parse xml element
+     */
     private void parse(Element e) {
         for (Object o : e.elements()) {
             Element element = (Element) o;
@@ -84,7 +110,6 @@ public class XMLDefinition extends AbstractASFDefinition {
             ActElement actElement;
             if (name.equals(ELEMENT_STARTEVENT)) {
                 actElement = parseStartEvent(element);
-
             } else if (name.equals(ELEMENT_ENDEVENT)) {
                 actElement = parseEndEvent(element);
             } else if (name.equals(ELEMENT_USER_TASK)) {
@@ -106,59 +131,113 @@ public class XMLDefinition extends AbstractASFDefinition {
                 continue;
             }
 
+            // parseModel common elements
             parseCommonElement(element, actElement);
+
+            if (actElement instanceof Node) {
+                parseNode(element, (Node) actElement);
+                definitionStack.peek().definition.addNode((Node) actElement);
+            } else if (actElement instanceof Flow) {
+                definitionStack.peek().definition.addFLow((Flow) actElement);
+            }
         }
     }
 
     private void parseDefinition(Element root) {
-        parseCommonElement(root, this);
-        this.version = Integer.parseInt(root.attributeValue("version"));
+        parseCommonElement(root, definitionStack.peek().definition);
+        setVersion(Integer.parseInt(root.attributeValue(ATTR_VERSION)));
     }
 
     private void parseCommonElement(Element element, ActElement actElement) {
-        actElement.setId(element.attributeValue("id"));
-        actElement.setName(element.attributeValue("name"));
-        actElement.setDescription(element.attributeValue("description"));
+        actElement.setId(element.attributeValue(ATTR_ID));
+        actElement.setName(element.attributeValue(ATTR_NAME));
+        actElement.setDescription(element.attributeValue(ATTR_DESCRIPTION));
+    }
 
+    private void parseNode(Element element, Node node) {
+        Element listenerElement = element.element(ATTR_LISTENER);
 
+        if (listenerElement != null) {
+            String className = listenerElement.attributeValue(ATTR_CLASS);
+            Class<?> listenerClass;
+            try {
+                listenerClass = loadClass(className);
+            } catch (Exception e) {
+                throw new ASFModelException("Failed to load listener class:" + className, e);
+            }
+
+            if (!(listenerClass.isAssignableFrom(ExecutionListener.class))) {
+                throw new ASFModelException("Invalidate listener class:" + className);
+            }
+
+            try {
+                ExecutionListener listener = (ExecutionListener) listenerClass.newInstance();
+                node.addExecutionListener(listener);
+            } catch (Exception e) {
+                throw new ASFModelException("Failed to create listener instance for " + className, e);
+            }
+        }
     }
 
     private ActElement parseStartEvent(Element element) {
-        return new StartEvent();
+        return new StartEvent(definitionStack.peek().node);
     }
 
     private ActElement parseEndEvent(Element element) {
-        return null;
+        return new EndEvent(definitionStack.peek().node);
     }
 
     private ActElement parseUserTask(Element element) {
-        return null;
+        return new UserTask(definitionStack.peek().node);
     }
 
     private ActElement parseServiceTask(Element element) {
-        return null;
+        return new ServiceTask(definitionStack.peek().node);
     }
 
     private ActElement parseParallelGateway(Element element) {
-        return null;
+        return new ParallelGateway(definitionStack.peek().node);
     }
 
     private ActElement parseExclusiveGateway(Element element) {
-        return null;
+        return new ExclusiveGateway(definitionStack.peek().node);
     }
 
     private ActElement parseInclusiveGateway(Element element) {
-        return null;
+        return new InclusiveGateway(definitionStack.peek().node);
     }
 
     private ActElement parseFlow(Element element) {
-        return null;
+        SequenceFlow flow = new SequenceFlow();
+
+        flow.setSourceRef(element.attributeValue(ATTR_SOURCE_REF));
+        flow.setTargetRef(element.attributeValue(ATTR_TARGET_REF));
+        Element condElement = element.element(ELEMENT_CONDITION);
+        if (condElement != null) {
+            String expression = condElement.attributeValue(ATTR_EXPRESSION);
+            JEXLConditionExpression jexlExpression = new JEXLConditionExpression();
+            jexlExpression.setExpression(expression);
+            flow.setConditionExpression(jexlExpression);
+        }
+        return flow;
     }
 
     private ActElement parseSubprocess(Element element) {
-        return null;
+        DefaultSubProcess subProcess = new DefaultSubProcess(definitionStack.peek().node);
+
+        final XMLDefinition parent = definitionStack.peek().definition;
+        XMLDefinition subDefinition = new XMLDefinition(parent);
+        parent.addSubDefinition(subDefinition);
+
+        definitionStack.push(new StackEntry(subDefinition, subProcess));
+        parse(element);
+        definitionStack.pop();
+        return subProcess;
     }
 
+    /**
+     * Load resource from classpath
+     */
     private InputStream loadResource(String path) {
         InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
         if (inputStream == null) {
@@ -166,5 +245,25 @@ public class XMLDefinition extends AbstractASFDefinition {
         }
 
         return inputStream;
+    }
+
+    private Class<?> loadClass(String name) throws Exception {
+        Class<?> cz = Thread.currentThread().getContextClassLoader().loadClass(name);
+        if (cz == null) {
+            cz = XMLDefinition.class.getClassLoader().loadClass(name);
+        }
+
+        return cz;
+    }
+
+    static class StackEntry {
+
+        final XMLDefinition definition;
+        final SubProcess node;
+
+        StackEntry(XMLDefinition definition, SubProcess node) {
+            this.definition = definition;
+            this.node = node;
+        }
     }
 }

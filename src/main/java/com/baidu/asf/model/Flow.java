@@ -16,6 +16,13 @@ public interface Flow extends ActElement {
     boolean isVirtual();
 
     /**
+     * From node id
+     */
+    String getSourceRef();
+
+    String getTargetRef();
+
+    /**
      * Bound a expression
      */
     void setConditionExpression(ConditionExpression expression);

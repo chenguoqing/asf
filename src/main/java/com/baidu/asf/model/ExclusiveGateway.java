@@ -1,7 +1,13 @@
 package com.baidu.asf.model;
 
+import sun.net.www.content.text.plain;
+
 /**
- * Created by chenguoqing01 on 14-3-2.
+ * ExclusiveGateway
  */
-public interface ExclusiveGateway extends Gateway {
+public class ExclusiveGateway extends AbstractNode implements Gateway {
+    public ExclusiveGateway(Node parent) {
+        setActType(ActType.ExclusiveGateway);
+        setParent(parent);
+    }
 }

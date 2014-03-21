@@ -7,15 +7,34 @@ import com.baidu.asf.expression.ConditionExpression;
  * Sequence flow
  */
 public class SequenceFlow extends AbstractElement implements Flow {
-    private final boolean isVirtual;
+    private String sourceRef;
+    private String targetRef;
+    private boolean isVirtual;
     private ConditionExpression expression;
 
-    public SequenceFlow(String id) {
-        this(id, false);
+    public SequenceFlow() {
+        setActType(ActType.Flow);
     }
 
-    public SequenceFlow(String id, boolean isVirtual) {
-        super(id, ActType.StartEvent);
+    public void setSourceRef(String nodeId) {
+        this.sourceRef = nodeId;
+    }
+
+    @Override
+    public String getSourceRef() {
+        return sourceRef;
+    }
+
+    public void setTargetRef(String nodeId) {
+        this.targetRef = nodeId;
+    }
+
+    @Override
+    public String getTargetRef() {
+        return targetRef;
+    }
+
+    public void setVirtual(boolean isVirtual) {
         this.isVirtual = isVirtual;
     }
 
