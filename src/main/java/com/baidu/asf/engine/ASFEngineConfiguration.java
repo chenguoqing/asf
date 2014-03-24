@@ -1,7 +1,19 @@
 package com.baidu.asf.engine;
 
+import com.baidu.asf.engine.command.CommandExecutor;
+import com.baidu.asf.engine.command.CommandInterceptor;
+
 /**
- * Created by chenguoqing01 on 14-3-19.
+ * {@link ASFEngineConfiguration} is responsible for building engine instance
  */
 public interface ASFEngineConfiguration {
+
+    /**
+     * Build engine
+     */
+    ASFEngine buildEngine();
+
+    CommandExecutor buildExecutor();
+
+    CommandInterceptor buildCommandInterceptor();
 }

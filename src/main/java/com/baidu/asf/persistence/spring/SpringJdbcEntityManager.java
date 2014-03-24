@@ -53,13 +53,12 @@ public class SpringJdbcEntityManager implements EntityManager {
         @Override
         public void setEntity(SqlRowSet rowSet, InstanceEntity entity) throws SQLException {
             entity.setId(rowSet.getLong(1));
-            entity.setDefName(rowSet.getString(2));
-            entity.setDefClassName(rowSet.getString(3));
-            entity.setDefVersion(rowSet.getInt(4));
-            entity.setStatus(rowSet.getInt(5));
-            entity.setVersion(rowSet.getInt(6));
-            entity.setCreated(rowSet.getTimestamp(7));
-            entity.setModified(rowSet.getTimestamp(8));
+            entity.setDefId(rowSet.getString(2));
+            entity.setDefVersion(rowSet.getInt(3));
+            entity.setStatus(rowSet.getInt(4));
+            entity.setVersion(rowSet.getInt(5));
+            entity.setCreated(rowSet.getTimestamp(6));
+            entity.setModified(rowSet.getTimestamp(7));
         }
     }
 
@@ -107,11 +106,10 @@ public class SpringJdbcEntityManager implements EntityManager {
         createEntity(SQLConstants.ASF_CREATE_INSTANCE, instanceEntity, new StatementSetter<InstanceEntity>() {
             @Override
             public void setPreparedStatement(PreparedStatement statement, InstanceEntity entity) throws SQLException {
-                statement.setString(1, entity.getDefName());
+                statement.setString(1, entity.getDefId());
                 statement.setInt(2, entity.getDefVersion());
-                statement.setString(3, entity.getDefClassName());
-                statement.setInt(4, entity.getStatus());
-                statement.setInt(5, entity.getVersion());
+                statement.setInt(3, entity.getStatus());
+                statement.setInt(4, entity.getVersion());
             }
         });
     }

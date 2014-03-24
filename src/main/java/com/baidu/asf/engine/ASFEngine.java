@@ -12,15 +12,15 @@ public interface ASFEngine {
     /**
      * Start doOutgoing instance with a doOutgoing definition
      */
-    ASFInstance startASFInstance(Class<? extends ASFDefinition> definitionClass);
+    ASFInstance startASFInstance(ASFDefinition definition);
 
     /**
      * Start doOutgoing instance with a doOutgoing definition and variables
      */
-    ASFInstance startASFInstance(Class<? extends ASFDefinition> definitionClass, Map<String, Object> variables);
+    ASFInstance startASFInstance(ASFDefinition definition, Map<String, Object> variables);
 
     /**
      * Load doOutgoing instance by id
      */
-    ASFInstance findASFInstance(long id);
+    ASFInstance findASFInstance(ASFDefinition definition, long id);
 }

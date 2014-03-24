@@ -19,7 +19,8 @@ public interface ProcessorContext {
         /**
          * Disable cache for command
          */
-        DisabledCache("cache.disabled");
+        DisabledCache("cache.disabled"),
+        TransactionPropagation("propagation.level");
 
         public final String paramName;
 

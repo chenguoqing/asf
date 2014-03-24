@@ -7,26 +7,22 @@ public class InstanceEntity extends Entity {
     /**
      * Process definition name
      */
-    private String defName;
+    private String defId;
     /**
      * Process definition version
      */
     private int defVersion;
     /**
-     * Process definition class name
-     */
-    private String defClassName;
-    /**
      * Process instance status
      */
     private int status;
 
-    public String getDefName() {
-        return defName;
+    public String getDefId() {
+        return defId;
     }
 
-    public void setDefName(String defName) {
-        this.defName = defName;
+    public void setDefId(String defId) {
+        this.defId = defId;
     }
 
     public int getDefVersion() {
@@ -35,14 +31,6 @@ public class InstanceEntity extends Entity {
 
     public void setDefVersion(int defVersion) {
         this.defVersion = defVersion;
-    }
-
-    public String getDefClassName() {
-        return defClassName;
-    }
-
-    public void setDefClassName(String defClassName) {
-        this.defClassName = defClassName;
     }
 
     public int getStatus() {

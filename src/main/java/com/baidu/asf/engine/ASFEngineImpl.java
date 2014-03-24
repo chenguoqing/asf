@@ -28,26 +28,20 @@ public class ASFEngineImpl implements ASFEngine {
     }
 
     @Override
-    public ASFInstance startASFInstance(final Class<? extends ASFDefinition> definitionClass) {
-        return startASFInstance(definitionClass, null);
+    public ASFInstance startASFInstance(ASFDefinition definition) {
+        return startASFInstance(definition, null);
     }
 
     @Override
-    public ASFInstance startASFInstance(final Class<? extends ASFDefinition> definitionClass, final Map<String,
+    public ASFInstance startASFInstance(final ASFDefinition definition, final Map<String,
             Object> variables) {
-        final ASFDefinition definition;
-        try {
-            definition = definitionClass.newInstance();
-        } catch (Exception e) {
-            throw new ASFException(e);
-        }
         ProcessorContextImpl context = new ProcessorContextImpl(definition, null, entityManager, null);
         return executor.execute(context, new Command<ASFInstance>() {
             @Override
             public ASFInstance execute(ProcessorContext context) {
                 InstanceEntity entity = new InstanceEntity();
-                entity.setDefName(definition.getName());
-                entity.setDefName(definitionClass.getName());
+                entity.setDefId(definition.getName());
+                entity.setDefId(definition.getId());
                 entity.setDefVersion(definition.getVersion());
                 entity.setStatus(ASFInstance.ASFStatus.ACTIVE.value);
                 // create instance
@@ -65,7 +59,7 @@ public class ASFEngineImpl implements ASFEngine {
     }
 
     @Override
-    public ASFInstance findASFInstance(final long id) {
+    public ASFInstance findASFInstance(final ASFDefinition definition, final long id) {
 
         ProcessorContextImpl context = new ProcessorContextImpl(null, null, entityManager, null);
 
@@ -74,15 +68,6 @@ public class ASFEngineImpl implements ASFEngine {
             public ASFInstance execute(ProcessorContext context) {
                 InstanceEntity entity = entityManager.loadASFInstance(id);
 
-                ASFDefinition definition;
-                try {
-                    definition = newDefinition(entity.getDefClassName());
-                } catch (ASFException e) {
-                    throw e;
-                } catch (Exception e) {
-                    throw new ASFException(e);
-                }
-
                 if (definition.getVersion() != entity.getDefVersion()) {
                     throw new ASFException("Incompatible definition version.");
                 }
@@ -90,25 +75,5 @@ public class ASFEngineImpl implements ASFEngine {
                 return instance;
             }
         });
-    }
-
-    private ASFDefinition newDefinition(String name) throws Exception {
-
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-
-        Class<?> cz = null;
-        if (cl != null) {
-            cz = cl.loadClass(name);
-        }
-
-        if (cz == null) {
-            cz = ASFEngineImpl.class.getClassLoader().loadClass(name);
-        }
-
-        if (!ASFDefinition.class.isAssignableFrom(cz)) {
-            throw new ASFException(name + " is not a implementation of " + ASFDefinition.class.getName());
-        }
-
-        return (ASFDefinition) cz.newInstance();
     }
 }
