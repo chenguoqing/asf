@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process id="testASF1" name="test asf" description="test description" version="1">
+    <startEvent id="theStart"/>
+
+    <sequenceFlow sourceRef="theStart" targetRef="LogIssue"/>
+
+    <serviceTask id="LogIssue" scriptFormat="groovy">
+        <listener class="com.baidu.model.LogIssueListener"/>
+    </serviceTask>
+
+    <sequenceFlow sourceRef="LogIssue" targetRef="forkGateway"/>
+
+    <parallelGateway id="forkGateway">
+        <listener class="com.baidu.model.CommonLogListener"/>
+    </parallelGateway>
+
+    <sequenceFlow sourceRef="forkGateway" targetRef="testLog"/>
+    <sequenceFlow sourceRef="forkGateway" targetRef="developerSubProcess"/>
+
+    <serviceTask id="testLog">
+        <listener class="com.baidu.model.CommonLogListener"/>
+    </serviceTask>
+
+    <subProcess id="developerSubProcess">
+        <startEvent id="theSubStart"/>
+        <sequenceFlow sourceRef="theSubStart" targetRef="DeveloperTask"/>
+
+        <userTask id="DeveloperTask" name="Complete JIRA issue">
+            <listener class="com.baidu.model.DeveloperTaskListener"/>
+        </userTask>
+
+        <sequenceFlow sourceRef="DeveloperTask" targetRef="TestTask"/>
+
+        <userTask id="TestTask" name="Test solution">
+        </userTask>
+
+        <sequenceFlow sourceRef="TestTask" targetRef="TestOK"/>
+
+        <exclusiveGateway id="TestOK"/>
+
+        <sequenceFlow sourceRef="TestOK" targetRef="DeveloperReady">
+            <conditionExpression>
+                ${solutionApproved == true}
+            </conditionExpression>
+        </sequenceFlow>
+
+        <sequenceFlow sourceRef="TestOK" targetRef="DeveloperTask">
+            <conditionExpression>
+                ${solutionApproved == false}
+            </conditionExpression>
+        </sequenceFlow>
+
+        <serviceTask id="DeveloperReady">
+            <listener class="com.baidu.model.CommonLogListener"/>
+        </serviceTask>
+
+        <sequenceFlow sourceRef="DeveloperReady" targetRef="theEndDeveloperSubProcess"/>
+        <endEvent id="theEndDeveloperSubProcess"/>
+    </subProcess>
+
+    <sequenceFlow sourceRef="testLog" targetRef="joinGateway"/>
+    <sequenceFlow sourceRef="developerSubProcess" targetRef="joinGateway"/>
+
+    <parallelGateway id="joinGateway">
+        <listener class="com.baidu.model.CommonLogListener"/>
+    </parallelGateway>
+
+    <sequenceFlow sourceRef="joinGateway" targetRef="theEnd"/>
+    <endEvent id="theEnd"/>
+</process>
