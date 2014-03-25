@@ -19,10 +19,6 @@ public class TransitionEntity extends Entity {
      */
     private String toActFullId;
     /**
-     * Flow id
-     */
-    private String flowId;
-    /**
      * Whether the flow is virtual?
      */
     private boolean isVirtualFlow;
@@ -57,14 +53,6 @@ public class TransitionEntity extends Entity {
 
     public void setToActFullId(String toActFullId) {
         this.toActFullId = toActFullId;
-    }
-
-    public String getFlowId() {
-        return flowId;
-    }
-
-    public void setFlowId(String flowId) {
-        this.flowId = flowId;
     }
 
     public boolean isVirtualFlow() {

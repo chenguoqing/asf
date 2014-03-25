@@ -273,10 +273,9 @@ public class SpringJdbcEntityManager implements EntityManager {
                 statement.setLong(1, transitionEntity.getInstanceId());
                 statement.setString(2, transitionEntity.getFromActFullId());
                 statement.setString(3, transitionEntity.getToActFullId());
-                statement.setString(4, transitionEntity.getFlowId());
-                statement.setInt(5, transitionEntity.isVirtualFlow() ? 1 : 0);
-                statement.setInt(6, transitionEntity.getFromActType().type);
-                statement.setInt(7, transitionEntity.getToActType().type);
+                statement.setInt(4, transitionEntity.isVirtualFlow() ? 1 : 0);
+                statement.setInt(5, transitionEntity.getFromActType().type);
+                statement.setInt(6, transitionEntity.getToActType().type);
             }
         });
     }
@@ -290,10 +289,9 @@ public class SpringJdbcEntityManager implements EntityManager {
                 entity.setInstanceId(rowSet.getLong(2));
                 entity.setFromActFullId(rowSet.getString(3));
                 entity.setToActFullId(rowSet.getString(4));
-                entity.setFlowId(rowSet.getString(5));
-                entity.setVirtualFlow(rowSet.getInt(6) == 1);
-                entity.setFromActType(ActType.get(rowSet.getInt(7)));
-                entity.setToActType(ActType.get(rowSet.getInt(8)));
+                entity.setVirtualFlow(rowSet.getInt(5) == 1);
+                entity.setFromActType(ActType.get(rowSet.getInt(6)));
+                entity.setToActType(ActType.get(rowSet.getInt(7)));
             }
         }, instanceId);
     }

@@ -37,7 +37,9 @@ public class DefaultSubProcessProcessor extends AbstractExecutionProcessor imple
     @Override
     public void startSubProcess(SubProcess subProcess, ProcessorContext subContext) {
         ExecutionProcessor startEventProcessor = ExecutionProcessorRegister.getProcessor(ActType.StartEvent);
-        startEventProcessor.doIncoming(subContext, subProcess, new SequenceFlow(START_SUBPROCESS_FLOW_ID, true));
+        startEventProcessor.doIncoming(subContext, subProcess, new SequenceFlow(subProcess.getFullId(),
+                subProcess.getSubProcessDefinition().getStartEvent().getFullId(), true,
+                null));
     }
 
     @Override
@@ -61,7 +63,7 @@ public class DefaultSubProcessProcessor extends AbstractExecutionProcessor imple
         // but don't fire the listeners
         ProcessorContext parentContext = subContext.newContext(subContext.getDefinition().getParent(), subProcess);
         traceExecution(parentContext, subContext.getDefinition().getEndEvent(),
-                new SequenceFlow(END_SUBPROCESS_FLOW_ID, true));
+                new SequenceFlow(subContext.getDefinition().getEndEvent().getFullId(), node.getFullId(), true, null));
 
         // switch the process context to parent and continue
         doOutgoing(parentContext);

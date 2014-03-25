@@ -15,7 +15,7 @@ public class InclusiveGatewayProcessor extends AbstractAutoExecutionProcessor {
     @Override
     public void doIncoming(ProcessorContext context, Node from, Flow flow) {
         super.doIncoming(context, from, flow);
-        Map<String, Node> predecessors = context.getNode().getPredecessors();
+        Map<Flow, Node> predecessors = context.getNode().getPredecessors();
 
         // join
         if (predecessors.size() == 1) {

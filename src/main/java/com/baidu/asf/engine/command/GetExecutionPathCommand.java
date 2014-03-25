@@ -2,6 +2,7 @@ package com.baidu.asf.engine.command;
 
 import com.baidu.asf.engine.ExecutionPathNode;
 import com.baidu.asf.engine.ProcessorContext;
+import com.baidu.asf.model.SequenceFlow;
 import com.baidu.asf.persistence.enitity.TransitionEntity;
 
 import java.util.HashMap;
@@ -26,7 +27,8 @@ public class GetExecutionPathCommand implements Command<ExecutionPathNode> {
         for (TransitionEntity entity : transitionEntities) {
             ExecutionPathNode from = getAndCreate(entity.getFromActFullId(), executionNodeMap);
             ExecutionPathNode to = getAndCreate(entity.getToActFullId(), executionNodeMap);
-            from.addSuccessor(entity.getFlowId(), to);
+            from.addSuccessor(new SequenceFlow(entity.getFromActFullId(), entity.getToActFullId(),
+                    entity.isVirtualFlow(), null), to);
         }
 
         return executionNodeMap.get(startEventId);

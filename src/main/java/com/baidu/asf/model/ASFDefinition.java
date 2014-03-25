@@ -1,12 +1,21 @@
 package com.baidu.asf.model;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
  * Adverse state flow doOutgoing definition
  */
-public interface ASFDefinition extends ActElement {
+public interface ASFDefinition {
+    /**
+     * Return the unique id
+     */
+    String getId();
+
+    /**
+     * Return the process description
+     */
+    String getDescription();
+
     /**
      * Retrieve the definition modified version
      */
@@ -50,5 +59,5 @@ public interface ASFDefinition extends ActElement {
     /**
      * Build definition
      */
-    void build() throws IOException;
+    void build();
 }

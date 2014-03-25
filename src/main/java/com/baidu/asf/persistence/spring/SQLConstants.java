@@ -10,18 +10,18 @@ public class SQLConstants {
      * Create instance
      */
     public static final String ASF_CREATE_INSTANCE = "INSERT INTO ASF_INSTANCE(DEF_NAME_,DEF_VERSION_," +
-            "DEF_CLASS_NAME_,STATUS_,VERSION_,GMT_CREATE,GMT_MODIFIED) VALUES(?,?,?,?,?,SYSDATE(),SYSDATE())";
+            "STATUS_,VERSION_,GMT_CREATE,GMT_MODIFIED) VALUES(?,?,?,?,?,SYSDATE(),SYSDATE())";
 
     /**
      * Load instance by id
      */
-    public static final String ASF_LOAD_INSTANCE = "SELECT ID_,DEF_NAME_,DEF_VERSION_,DEF_CLASS_NAME_,STATUS_," +
+    public static final String ASF_LOAD_INSTANCE = "SELECT ID_,DEF_NAME_,DEF_VERSION_,STATUS_," +
             "VERSION_,GMT_CREATE,GMT_MODIFIED FROM ASF_INSTANCE WHERE ID=?";
 
     /**
      * Load all instances(on processing)
      */
-    public static final String ASF_LOAD_ALL_INSTANCES = "SELECT ID_,DEF_NAME_,DEF_VERSION_,DEF_CLASS_NAME_,STATUS_," +
+    public static final String ASF_LOAD_ALL_INSTANCES = "SELECT ID_,DEF_NAME_,DEF_VERSION_,STATUS_," +
             "VERSION_,GMT_CREATE,GMT_MODIFIED FROM ASF_INSTANCE";
 
     /**
@@ -60,13 +60,13 @@ public class SQLConstants {
      * Create transition entity
      */
     public static final String ASF_CREATE_TRANSITION = "INSERT INTO ASF_TRANSITION(INSTANCE_ID_,FROM_ACT_FULL_ID_," +
-            "TO_ACT_FULL_ID_,FLOW_ID_,FLOW_VIRTUAL_,FROM_ACT_TYPE_,TO_ACT_TYPE_,GMT_CREATE,GMT_MODIFIED)VALUES(?,?,?," +
-            "?,?,?,?,SYSDATE(),SYSDATE())";
+            "TO_ACT_FULL_ID_,FLOW_VIRTUAL_,FROM_ACT_TYPE_,TO_ACT_TYPE_,GMT_CREATE,GMT_MODIFIED)VALUES(?,?,?," +
+            "?,?,?,SYSDATE(),SYSDATE())";
     /**
      * Query all transitions for instance
      */
     public static final String ASF_FIND_TRANSITIONS = "SELECT ID_,INSTANCE_ID_,FROM_ACT_FULL_ID_,TO_ACT_FULL_ID_," +
-            "FLOW_ID_,FLOW_VIRTUAL_,FROM_ACT_TYPE_,TO_ACT_TYPE_,GMT_CREATE,GMT_MODIFIED FROM ASF_TRANSITION WHERE " +
+            "FLOW_VIRTUAL_,FROM_ACT_TYPE_,TO_ACT_TYPE_,GMT_CREATE,GMT_MODIFIED FROM ASF_TRANSITION WHERE " +
             "INSTANCE_ID_=?";
 
     /**

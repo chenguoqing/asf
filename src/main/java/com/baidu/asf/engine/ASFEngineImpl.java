@@ -35,12 +35,14 @@ public class ASFEngineImpl implements ASFEngine {
     @Override
     public ASFInstance startASFInstance(final ASFDefinition definition, final Map<String,
             Object> variables) {
+
+        definition.build();
+
         ProcessorContextImpl context = new ProcessorContextImpl(definition, null, entityManager, null);
         return executor.execute(context, new Command<ASFInstance>() {
             @Override
             public ASFInstance execute(ProcessorContext context) {
                 InstanceEntity entity = new InstanceEntity();
-                entity.setDefId(definition.getName());
                 entity.setDefId(definition.getId());
                 entity.setDefVersion(definition.getVersion());
                 entity.setStatus(ASFInstance.ASFStatus.ACTIVE.value);
@@ -60,6 +62,8 @@ public class ASFEngineImpl implements ASFEngine {
 
     @Override
     public ASFInstance findASFInstance(final ASFDefinition definition, final long id) {
+
+        definition.build();
 
         ProcessorContextImpl context = new ProcessorContextImpl(null, null, entityManager, null);
 

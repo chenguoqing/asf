@@ -9,7 +9,7 @@ import com.baidu.asf.expression.ConditionExpression;
  * (for tracing execution history, we can create a virtual connection from SubProcess nodeId to StartEvent of sub
  * process.Actually, the connection is not exists with user perspective.)
  */
-public interface Flow extends ActElement {
+public interface Flow {
     /**
      * Whether the flow is virtual?
      */
@@ -25,7 +25,7 @@ public interface Flow extends ActElement {
     /**
      * Bound a expression
      */
-    void setConditionExpression(ConditionExpression expression);
+    ConditionExpression getConditionExpression();
 
     boolean evaluate(VariableContext context);
 }

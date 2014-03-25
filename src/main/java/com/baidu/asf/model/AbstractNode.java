@@ -10,15 +10,59 @@ import java.util.Map;
 /**
  * Common implementation for Node,implementations should driven from this class
  */
-public abstract class AbstractNode extends AbstractElement implements Node {
+public abstract class AbstractNode implements Node {
+    private String id;
+    private ActType actType;
+    private String name;
+    private String description;
     protected Node parent;
     protected final List<ExecutionListener> listeners = new ArrayList<ExecutionListener>();
     private Map<Flow, Node> successors = new HashMap<Flow, Node>();
-    private Map<String, Node> predecessors = new HashMap<String, Node>();
+    private Map<Flow, Node> predecessors = new HashMap<Flow, Node>();
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    public void setActType(ActType actType) {
+        this.actType = actType;
+    }
+
+    @Override
+    public ActType getType() {
+        return actType;
+    }
 
     @Override
     public void addSuccessor(Flow flow, Node successor) {
         successors.put(flow, successor);
+        successor.addPredecessor(flow, this);
     }
 
     @Override
@@ -27,13 +71,13 @@ public abstract class AbstractNode extends AbstractElement implements Node {
     }
 
     @Override
-    public void addPredecessor(String flowId, Node predecessor) {
-        predecessors.put(flowId, predecessor);
+    public void addPredecessor(Flow flow, Node predecessor) {
+        predecessors.put(flow, predecessor);
     }
 
     @Override
-    public Map<String, Node> getPredecessors() {
-        return new HashMap<String, Node>(predecessors);
+    public Map<Flow, Node> getPredecessors() {
+        return new HashMap<Flow, Node>(predecessors);
     }
 
     @Override

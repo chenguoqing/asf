@@ -1,5 +1,7 @@
 package com.baidu.asf.engine;
 
+import com.baidu.asf.model.Flow;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,17 +11,17 @@ import java.util.Map;
  */
 public class ExecutionPathNode {
     public final String nodeId;
-    private final Map<String, ExecutionPathNode> successors = new HashMap<String, ExecutionPathNode>();
+    private final Map<Flow, ExecutionPathNode> successors = new HashMap<Flow, ExecutionPathNode>();
 
     public ExecutionPathNode(String nodeId) {
         this.nodeId = nodeId;
     }
 
-    public void addSuccessor(String flow, ExecutionPathNode node) {
+    public void addSuccessor(Flow flow, ExecutionPathNode node) {
         successors.put(flow, node);
     }
 
-    public Map<String, ExecutionPathNode> getSuccessors() {
+    public Map<Flow, ExecutionPathNode> getSuccessors() {
         return successors;
     }
 }

@@ -5,9 +5,51 @@ import com.baidu.asf.engine.ExecutionListener;
 import java.util.Map;
 
 /**
- * The element that can contains some successors have been abstracted with {@link Node}
+ * The base element interface which can be draw on the doOutgoing definition graph.All elements can be classified with:
+ * <p>
+ * <li>Flow: Connections between the <strong>ExecutionTask and Event</strong>
+ * <li>Event: Start event or End event
+ * <li>ExecutionTask: Execute the user logic
+ * <li>Gateway: dispatch the flows by condition
+ * <li>SubProcess: sub doOutgoing
+ * </p>
  */
-public interface Node extends ActElement {
+public interface Node {
+    /**
+     * Unique id
+     */
+    void setId(String id);
+
+    /**
+     * Unique id
+     */
+    String getId();
+
+    /**
+     * Element name
+     */
+    void setName(String name);
+
+    /**
+     * Retrieve element name
+     */
+    String getName();
+
+    /**
+     * Element description
+     */
+    void setDescription(String description);
+
+    /**
+     * Retrieve element description
+     */
+    String getDescription();
+
+    /**
+     * Element type
+     */
+    ActType getType();
+
     /**
      * If current nodeId is within sub doOutgoing, the parent nodeId should be the SubProcess,otherwise, return null
      */
@@ -34,12 +76,12 @@ public interface Node extends ActElement {
     /**
      * Add a predecessor nodeId
      */
-    void addPredecessor(String flowId, Node predecessor);
+    void addPredecessor(Flow flow, Node predecessor);
 
     /**
      * Retrieve all predecessor nodes
      */
-    Map<String, Node> getPredecessors();
+    Map<Flow, Node> getPredecessors();
 
     /**
      * Add listener

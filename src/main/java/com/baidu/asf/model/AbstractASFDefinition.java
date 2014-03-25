@@ -1,25 +1,40 @@
 package com.baidu.asf.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The default implementation of definition
  */
-public abstract class AbstractASFDefinition extends AbstractElement implements ASFDefinition {
+public abstract class AbstractASFDefinition implements ASFDefinition {
+
+    private String id;
+    private String description;
 
     private ASFDefinition parent;
     private int version;
     private StartEvent startEvent;
     private EndEvent endEvent;
     protected final Map<String, Node> nodes = new HashMap<String, Node>();
-    protected final Map<String, Flow> flows = new HashMap<String, Flow>();
+    protected final Set<Flow> flows = new HashSet<Flow>();
 
     protected final Map<String, ASFDefinition> subDefinitions = new HashMap<String, ASFDefinition>();
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
-    public ActType getType() {
-        return ActType.Definition;
+    public String getId() {
+        return id;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     public void setVersion(int version) {
@@ -62,11 +77,11 @@ public abstract class AbstractASFDefinition extends AbstractElement implements A
     }
 
     public void addFLow(Flow flow) {
-        flows.put(flow.getId(), flow);
+        flows.add(flow);
     }
 
-    public Map<String, Flow> getFlows() {
-        return new HashMap<String, Flow>(flows);
+    public List<Flow> getFlows() {
+        return new ArrayList<Flow>(flows);
     }
 
     @Override
@@ -120,18 +135,17 @@ public abstract class AbstractASFDefinition extends AbstractElement implements A
         return new HashMap<String, ASFDefinition>(subDefinitions);
     }
 
-    protected void buildDefinition(AbstractASFDefinition definition) {
+    protected void buildDefinition() {
 
-        StartEvent startEvent = definition.getStartEvent();
-        EndEvent endEvent = definition.getEndEvent();
+        StartEvent startEvent = getStartEvent();
+        EndEvent endEvent = getEndEvent();
 
         if (startEvent == null || endEvent == null) {
             throw new ASFModelException("The definition must have a StartEvent and a EndEvent.");
         }
 
 
-        for (String flowId : definition.flows.keySet()) {
-            Flow flow = definition.flows.get(flowId);
+        for (Flow flow : flows) {
             Node source = getNode(flow.getSourceRef());
             Node target = getNode(flow.getTargetRef());
 
@@ -160,51 +174,52 @@ public abstract class AbstractASFDefinition extends AbstractElement implements A
         }
 
         // validate model
-        validateModel(definition);
+        validateModel();
     }
 
-    private void validateModel(AbstractASFDefinition definition) {
+    private void validateModel() {
 
         if (startEvent.getSuccessors().size() != 1) {
             throw new ASFModelException("The StartEvent must have only on outgoing flow.");
         }
 
         if (endEvent.getPredecessors().size() == 0) {
-            throw new ASFModelException("The EndEvent must have at lest ony incoming flow.");
+            throw new ASFModelException("The EndEvent must have at lest one incoming flow.");
         }
 
         final Map<String, Node> caches = new HashMap<String, Node>(nodes);
 
         // validate mode
-        validateModel(definition, startEvent, caches);
+        validateModel(startEvent, caches);
 
         // isolate nodes
         if (!caches.isEmpty()) {
-            throw new ASFModelException("There are some isolate nodes.");
+            throw new ASFModelException("There are some isolated nodes." + Arrays.toString(caches.keySet().toArray(new
+                    String[0])));
         }
     }
 
-    private void validateModel(AbstractASFDefinition definition, Node node, Map<String, Node> caches) {
+    private void validateModel(Node node, Map<String, Node> caches) {
 
         if (!caches.containsKey(node.getId())) {
             return;
         }
 
         // non-EndEvent node must has successors
-        if (node.getSuccessors().isEmpty() && node != definition.endEvent) {
+        if (node.getSuccessors().isEmpty() && node != endEvent) {
             throw new ASFModelException("The node " + node.getId() + " have no any successors.");
         }
 
         // avoiding dead-loop
         caches.remove(node.getId());
 
-        for (Node successor : definition.startEvent.getSuccessors().values()) {
+        for (Node successor : node.getSuccessors().values()) {
             if (successor.getType() == ActType.SubProcess) {
                 SubProcess subProcess = (SubProcess) successor;
-                buildDefinition((AbstractASFDefinition) subProcess.getSubProcessDefinition());
+                ((AbstractASFDefinition) subProcess.getSubProcessDefinition()).buildDefinition();
             }
 
-            validateModel(definition, successor, caches);
+            validateModel(successor, caches);
         }
     }
 }

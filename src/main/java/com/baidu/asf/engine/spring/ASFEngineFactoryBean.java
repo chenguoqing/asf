@@ -25,7 +25,7 @@ public class ASFEngineFactoryBean extends AbstractFactoryBean<ASFEngineFactoryBe
 
     @Override
     public Class<?> getObjectType() {
-        return SpringASFEngineProxy.class;
+        return ASFEngineProxy.class;
     }
 
     @Override
