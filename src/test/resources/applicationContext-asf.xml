@@ -9,7 +9,7 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="com.baidu.fsm"/>
+    <context:component-scan base-package="com.baidu.asf"/>
     <tx:annotation-driven/>
 
     <context:property-placeholder location="classpath:config.properties"/>
@@ -36,5 +36,17 @@
         <constructor-arg ref="dataSource"/>
     </bean>
 
+    <bean id="testDefinition" class="com.baidu.asf.model.xml.XMLDefinition">
+        <constructor-arg value="/model/asf1.xml"/>
+    </bean>
 
+    <bean id="engineConfig" class="com.baidu.asf.engine.spring.SpringASFEngineConfiguration">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <bean class="com.baidu.asf.engine.spring.ASFEngineFactoryBean">
+        <property name="definition" ref="testDefinition"/>
+        <property name="engineConfiguration" ref="engineConfig"/>
+    </bean>
 </beans>
