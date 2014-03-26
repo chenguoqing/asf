@@ -10,8 +10,8 @@ import com.baidu.asf.model.Node;
  */
 public abstract class AbstractAutoExecutionProcessor extends AbstractExecutionProcessor {
     @Override
-    public void doIncoming(ProcessorContext context, Node from, Flow flow) {
-        super.doIncoming(context, from, flow);
-        doOutgoing(context);
+    public void doIncoming(ProcessorContext context, Node node, Node from, Flow flow) {
+        super.doIncoming(context, node, from, flow);
+        doOutgoing(context, node);
     }
 }

@@ -13,12 +13,12 @@ import com.baidu.asf.persistence.enitity.ExecutionEntity;
  */
 public class UserTaskProcessor extends AbstractExecutionProcessor {
     @Override
-    public void doIncoming(ProcessorContext context, Node from, Flow flow) {
-        super.doIncoming(context, from, flow);
+    public void doIncoming(ProcessorContext context, Node node, Node from, Flow flow) {
+        super.doIncoming(context, node, from, flow);
 
         // Create user task execution
         ExecutionEntity entity = new ExecutionEntity();
-        entity.setActFullId(context.getNode().getFullId());
+        entity.setActFullId(node.getFullId());
         entity.setActType(ActType.UserTask);
         entity.setInstanceId(context.getInstance().getId());
 
@@ -26,7 +26,7 @@ public class UserTaskProcessor extends AbstractExecutionProcessor {
     }
 
     @Override
-    public void doOutgoing(ProcessorContext context) {
+    public void doOutgoing(ProcessorContext context, Node node) {
         // remove user task
         try {
             context.getEntityManager().removeExecution(context.getExecutionTaskId());
@@ -35,6 +35,6 @@ public class UserTaskProcessor extends AbstractExecutionProcessor {
         }
 
         // leave UserTask
-        leave(context, LeaveMode.EXCLUSIVE);
+        leave(context, node, LeaveMode.EXCLUSIVE);
     }
 }

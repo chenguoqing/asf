@@ -92,7 +92,10 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
 
     @Override
     public ExecutionPathNode getExecutionPath() {
-        ProcessorContextImpl context = new ProcessorContextImpl(definition, this, entityManager, null);
+        ProcessorContextImpl context = new ProcessorContextImpl();
+        context.setDefinition(definition);
+        context.setInstance(this);
+        context.setEntityManager(entityManager);
         return executor.execute(context, new GetExecutionPathCommand());
     }
 
@@ -118,7 +121,10 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
             throw new ASFException("Not found the process definition :" + executionEntity.getActFullId());
         }
 
-        ProcessorContextImpl context = new ProcessorContextImpl(def, this, entityManager, node);
+        ProcessorContextImpl context = new ProcessorContextImpl();
+        context.setDefinition(def);
+        context.setInstance(this);
+        context.setEntityManager(entityManager);
         context.setExecutionTaskId(executionTaskId);
 
         executor.execute(context, new CompleteCommand(node));
@@ -145,7 +151,10 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
     }
 
     private void executeUpdateInstanceStatus() {
-        ProcessorContextImpl context = new ProcessorContextImpl(definition, this, entityManager, null);
+        ProcessorContextImpl context = new ProcessorContextImpl();
+        context.setDefinition(definition);
+        context.setInstance(this);
+        context.setEntityManager(entityManager);
         try {
             executor.execute(context, new Command<Void>() {
                 @Override

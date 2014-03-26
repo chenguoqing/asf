@@ -9,19 +9,19 @@ public class SQLConstants {
     /**
      * Create instance
      */
-    public static final String ASF_CREATE_INSTANCE = "INSERT INTO ASF_INSTANCE(DEF_NAME_,DEF_VERSION_," +
-            "STATUS_,VERSION_,GMT_CREATE,GMT_MODIFIED) VALUES(?,?,?,?,?,SYSDATE(),SYSDATE())";
+    public static final String ASF_CREATE_INSTANCE = "INSERT INTO ASF_INSTANCE(DEF_ID_,DEF_VERSION_," +
+            "STATUS_,VERSION_,GMT_CREATE,GMT_MODIFIED) VALUES(?,?,?,?,SYSDATE(),SYSDATE())";
 
     /**
      * Load instance by id
      */
-    public static final String ASF_LOAD_INSTANCE = "SELECT ID_,DEF_NAME_,DEF_VERSION_,STATUS_," +
-            "VERSION_,GMT_CREATE,GMT_MODIFIED FROM ASF_INSTANCE WHERE ID=?";
+    public static final String ASF_LOAD_INSTANCE = "SELECT ID_,DEF_ID_,DEF_VERSION_,STATUS_," +
+            "VERSION_,GMT_CREATE,GMT_MODIFIED FROM ASF_INSTANCE WHERE ID_=?";
 
     /**
      * Load all instances(on processing)
      */
-    public static final String ASF_LOAD_ALL_INSTANCES = "SELECT ID_,DEF_NAME_,DEF_VERSION_,STATUS_," +
+    public static final String ASF_LOAD_ALL_INSTANCES = "SELECT ID_,DEF_ID_,DEF_VERSION_,STATUS_," +
             "VERSION_,GMT_CREATE,GMT_MODIFIED FROM ASF_INSTANCE";
 
     /**

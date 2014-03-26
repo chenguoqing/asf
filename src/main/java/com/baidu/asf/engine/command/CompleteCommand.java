@@ -35,7 +35,7 @@ public class CompleteCommand implements Command<Void> {
     @Override
     public Void execute(ProcessorContext context) {
         ExecutionProcessor processor = processors.get(node.getType());
-        processor.doOutgoing(context);
+        processor.doOutgoing(context, node);
         return null;
     }
 }

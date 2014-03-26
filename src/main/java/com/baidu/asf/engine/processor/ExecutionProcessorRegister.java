@@ -6,13 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by chenguoqing01 on 14-3-14.
+ * Process register
  */
 public class ExecutionProcessorRegister {
     private static final Map<ActType, ExecutionProcessor> processors = new HashMap<ActType, ExecutionProcessor>();
 
     // register processors for all act nodeId
     static {
+        processors.put(ActType.StartEvent, new StartEventProcessor());
         processors.put(ActType.UserTask, new UserTaskProcessor());
         processors.put(ActType.ServiceTask, new ServiceTaskProcessor());
         processors.put(ActType.ParallelGateway, new ParallelGatewayProcessor());

@@ -25,13 +25,13 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
      * Do some common processing for all processors
      */
     @Override
-    public void doIncoming(ProcessorContext context, Node from, Flow flow) {
+    public void doIncoming(ProcessorContext context, Node node, Node from, Flow flow) {
         // save transition history
-        traceExecution(context, from, flow);
+        traceExecution(context, node, from, flow);
 
         // notify all listeners
-        final ExecutionEvent event = new ExecutionEvent(context.getInstance(), from, flow, context.getNode());
-        ExecutionListener[] listeners = context.getNode().getExecutionListeners();
+        final ExecutionEvent event = new ExecutionEvent(context.getInstance(), from, flow, node);
+        ExecutionListener[] listeners = node.getExecutionListeners();
 
         if (listeners != null) {
             for (ExecutionListener listener : listeners) {
@@ -40,14 +40,14 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
         }
     }
 
-    protected void traceExecution(ProcessorContext context, Node from, Flow flow) {
+    protected void traceExecution(ProcessorContext context, Node node, Node from, Flow flow) {
         // save transition history
         TransitionEntity transitionEntity = new TransitionEntity();
         transitionEntity.setInstanceId(context.getInstance().getId());
         transitionEntity.setFromActFullId(from.getFullId());
         transitionEntity.setFromActType(from.getType());
-        transitionEntity.setToActFullId(context.getNode().getFullId());
-        transitionEntity.setToActType(context.getNode().getType());
+        transitionEntity.setToActFullId(node.getFullId());
+        transitionEntity.setToActType(node.getType());
         transitionEntity.setVirtualFlow(flow.isVirtual());
 
         context.getEntityManager().createTransition(transitionEntity);
@@ -56,21 +56,21 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
     /**
      * Leaves current nodeId with mode
      */
-    protected void leave(ProcessorContext context, LeaveMode mode) {
-        Map<Flow, Node> successors = context.getNode().getSuccessors();
+    protected void leave(ProcessorContext context, Node node, LeaveMode mode) {
+        Map<Flow, Node> successors = node.getSuccessors();
 
         Flow defaultFlow = successors.keySet().iterator().next();
         Node defaultTarget = successors.get(defaultFlow);
 
         if (successors.size() == 1) {
-            doLeaving(context, defaultFlow, defaultTarget);
+            doLeaving(context, node, defaultFlow, defaultTarget);
             return;
         }
 
         for (Iterator<Flow> it = successors.keySet().iterator(); it.hasNext(); ) {
             Flow flow = it.next();
             if (mode == LeaveMode.PARALLEL || flow.evaluate(context.getInstance())) {
-                doLeaving(context, flow, successors.get(flow));
+                doLeaving(context, node, flow, successors.get(flow));
                 if (mode == LeaveMode.EXCLUSIVE) {
                     break;
                 }
@@ -78,8 +78,8 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
         }
     }
 
-    protected void doLeaving(ProcessorContext context, Flow flow, Node target) {
+    protected void doLeaving(ProcessorContext context, Node node, Flow flow, Node target) {
         ExecutionProcessor targetProcessor = ExecutionProcessorRegister.getProcessor(target.getType());
-        targetProcessor.doIncoming(context, context.getNode(), flow);
+        targetProcessor.doIncoming(context, target, node, flow);
     }
 }

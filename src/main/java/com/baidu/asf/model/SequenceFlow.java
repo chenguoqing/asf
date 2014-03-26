@@ -12,6 +12,10 @@ public class SequenceFlow implements Flow {
     private final boolean isVirtual;
     private final ConditionExpression expression;
 
+    public SequenceFlow(String sourceRef, String targetRef) {
+        this(sourceRef, targetRef, true, null);
+    }
+
     public SequenceFlow(String sourceRef, String targetRef, ConditionExpression expression) {
         this(sourceRef, targetRef, false, expression);
     }

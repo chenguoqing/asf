@@ -1,8 +1,6 @@
 package com.baidu.asf.engine;
 
-import com.baidu.asf.engine.command.CommandExecutor;
 import com.baidu.asf.model.ASFDefinition;
-import com.baidu.asf.model.Node;
 import com.baidu.asf.persistence.EntityManager;
 
 import java.util.Map;
@@ -56,11 +54,6 @@ public interface ProcessorContext {
     long getExecutionTaskId();
 
     /**
-     * Associated nodeId
-     */
-    <T extends Node> T getNode();
-
-    /**
      * Add control parameters for under command interceptors
      */
     void addParam(String name, Object value);
@@ -70,11 +63,4 @@ public interface ProcessorContext {
     <T> T getParam(String name);
 
     Map<String, Object> getParams();
-
-    /**
-     * Return the shallow newContext of current instance
-     */
-    ProcessorContext newContext(ASFDefinition definition, Node node);
-
-    CommandExecutor getExecutor();
 }

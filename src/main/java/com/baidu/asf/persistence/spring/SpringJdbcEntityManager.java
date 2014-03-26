@@ -127,8 +127,7 @@ public class SpringJdbcEntityManager implements EntityManager {
                     entity.setCreated(new Timestamp(System.currentTimeMillis()));
                     entity.setModified(new Timestamp(System.currentTimeMillis()));
 
-                    PreparedStatement statement = con.prepareStatement(SQLConstants.ASF_CREATE_INSTANCE,
-                            Statement.RETURN_GENERATED_KEYS);
+                    PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                     setter.setPreparedStatement(statement, entity);
 
                     return statement;

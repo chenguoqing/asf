@@ -150,7 +150,9 @@ public abstract class AbstractVariableContext implements VariableContext, System
     }
 
     private ProcessorContext createExecutionContext(Map<String, Object> params) {
-        ProcessorContextImpl context = new ProcessorContextImpl(getInstance(), getEntityManager(), null);
+        ProcessorContextImpl context = new ProcessorContextImpl();
+        context.setInstance(getInstance());
+        context.setEntityManager(getEntityManager());
         if (params != null) {
             context.addParams(params);
         }

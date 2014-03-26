@@ -38,26 +38,25 @@ public class ASFEngineImpl implements ASFEngine {
 
         definition.build();
 
-        ProcessorContextImpl context = new ProcessorContextImpl(definition, null, entityManager, null);
-        return executor.execute(context, new Command<ASFInstance>() {
-            @Override
-            public ASFInstance execute(ProcessorContext context) {
-                InstanceEntity entity = new InstanceEntity();
-                entity.setDefId(definition.getId());
-                entity.setDefVersion(definition.getVersion());
-                entity.setStatus(ASFInstance.ASFStatus.ACTIVE.value);
-                // create instance
-                entityManager.createASFInstance(entity);
+        InstanceEntity entity = new InstanceEntity();
+        entity.setDefId(definition.getId());
+        entity.setDefVersion(definition.getVersion());
+        entity.setStatus(ASFInstance.ASFStatus.ACTIVE.value);
+        // create instance
+        entityManager.createASFInstance(entity);
 
-                // start process
-                ExecutionProcessor processor = ExecutionProcessorRegister.getProcessor(ActType.StartEvent);
-                processor.doOutgoing(context);
+        ASFInstance instance = new ASFInstanceImpl(entity.getId(), definition, entityManager, executor);
+        instance.setVariables(variables);
 
-                ASFInstance instance = new ASFInstanceImpl(entity.getId(), definition, entityManager, executor);
-                instance.setVariables(variables);
-                return instance;
-            }
-        });
+        ProcessorContextImpl context = new ProcessorContextImpl();
+        context.setDefinition(definition);
+        context.setInstance(instance);
+        context.setEntityManager(entityManager);
+        // start process
+        ExecutionProcessor processor = ExecutionProcessorRegister.getProcessor(ActType.StartEvent);
+        processor.doOutgoing(context, definition.getStartEvent());
+
+        return instance;
     }
 
     @Override
@@ -65,7 +64,8 @@ public class ASFEngineImpl implements ASFEngine {
 
         definition.build();
 
-        ProcessorContextImpl context = new ProcessorContextImpl(null, null, entityManager, null);
+        ProcessorContextImpl context = new ProcessorContextImpl();
+        context.setEntityManager(entityManager);
 
         return executor.execute(context, new Command<ASFInstance>() {
             @Override
