@@ -18,7 +18,7 @@ public class UserTaskProcessor extends AbstractExecutionProcessor {
 
         // Create user task execution
         ExecutionEntity entity = new ExecutionEntity();
-        entity.setActFullId(node.getFullId());
+        entity.setNodeFullId(node.getFullId());
         entity.setActType(ActType.UserTask);
         entity.setInstanceId(context.getInstance().getId());
 

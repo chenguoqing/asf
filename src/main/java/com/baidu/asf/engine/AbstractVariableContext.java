@@ -116,7 +116,7 @@ public abstract class AbstractVariableContext implements VariableContext, System
         return executeCommand(new Command<Object>() {
             @Override
             public Object execute(ProcessorContext context) {
-                VariableEntity entity = entityManager.loadVariable(id, name, variableClass);
+                VariableEntity entity = entityManager.findVariable(id, name, variableClass);
                 return entity == null ? null : entity.getValue();
             }
         }, params);

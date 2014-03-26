@@ -102,7 +102,6 @@ public abstract class AbstractNode implements Node {
     @Override
     public String getFullId() {
         StringBuilder builder = new StringBuilder();
-        builder.append(getId());
 
         Node node = this;
 

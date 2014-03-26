@@ -11,7 +11,8 @@ public class VariableEntity extends Entity {
         STRING(0),
         LONG(1),
         DOUBLE(2),
-        OBJECT(3);
+        BOOLEAN(3),
+        OBJECT(4);
 
         public final int value;
 
@@ -37,7 +38,7 @@ public class VariableEntity extends Entity {
             this.value = value;
         }
 
-        static VariableClass get(int value) {
+        public static VariableClass get(int value) {
             if (value < USER.value || value > SYSTEM.value) {
                 throw new IllegalArgumentException("Invalidate value:" + value);
             }
@@ -113,6 +114,7 @@ public class VariableEntity extends Entity {
 
     public void setDouble(Double dValue) {
         this.dValue = dValue;
+        this.type = VariableType.DOUBLE;
     }
 
     public Long getLong() {
@@ -121,6 +123,7 @@ public class VariableEntity extends Entity {
 
     public void setLong(Long lValue) {
         this.lValue = lValue;
+        this.type = VariableType.LONG;
     }
 
     public String getString() {
@@ -129,6 +132,16 @@ public class VariableEntity extends Entity {
 
     public void setString(String sValue) {
         this.sValue = sValue;
+        this.type = VariableType.STRING;
+    }
+
+    public void setBoolean(boolean bValue) {
+        this.lValue = bValue ? 1L : 0;
+        this.type = VariableType.BOOLEAN;
+    }
+
+    public boolean getBoolean() {
+        return lValue == 1L;
     }
 
     public Object getObject() {
@@ -137,21 +150,28 @@ public class VariableEntity extends Entity {
 
     public void setObject(Object oValue) {
         this.oValue = oValue;
+        this.type = VariableType.OBJECT;
     }
 
     public void setVariable(String name, Object value) {
         if (value instanceof String) {
-            this.sValue = (String) value;
-            this.type = VariableType.STRING;
+            setString((String) value);
+        } else if (value instanceof Character) {
+            setString(value.toString());
+        } else if (value instanceof Byte) {
+            setLong(((Byte) value).longValue());
+        } else if (value instanceof Integer) {
+            setLong(((Integer) value).longValue());
         } else if (value instanceof Long) {
-            this.lValue = (Long) value;
-            this.type = VariableType.LONG;
+            setLong((Long) value);
+        } else if (value instanceof Float) {
+            setDouble(((Float) value).doubleValue());
+        } else if (value instanceof Boolean) {
+            setBoolean((Boolean) value);
         } else if (value instanceof Double) {
-            this.dValue = (Double) value;
-            this.type = VariableType.DOUBLE;
+            setDouble((Double) value);
         } else {
-            this.oValue = value;
-            this.type = VariableType.OBJECT;
+            setObject(value);
         }
         this.name = name;
     }
@@ -163,6 +183,10 @@ public class VariableEntity extends Entity {
 
         if (type == VariableType.DOUBLE) {
             return dValue;
+        }
+
+        if (type == VariableType.BOOLEAN) {
+            return lValue == 1L;
         }
 
         if (type == VariableType.OBJECT) {
@@ -180,11 +204,11 @@ public class VariableEntity extends Entity {
         this.type = type;
     }
 
-    public VariableClass getVariableClass() {
-        return variableClass;
-    }
-
     public void setVariableClass(VariableClass variableClass) {
         this.variableClass = variableClass;
+    }
+
+    public VariableClass getVariableClass() {
+        return variableClass;
     }
 }

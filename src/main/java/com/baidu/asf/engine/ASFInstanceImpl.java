@@ -6,7 +6,6 @@ import com.baidu.asf.engine.command.CommandExecutor;
 import com.baidu.asf.engine.command.CompleteCommand;
 import com.baidu.asf.engine.command.GetExecutionPathCommand;
 import com.baidu.asf.model.ASFDefinition;
-import com.baidu.asf.model.Node;
 import com.baidu.asf.model.UserTask;
 import com.baidu.asf.persistence.EntityManager;
 import com.baidu.asf.persistence.MVCCException;
@@ -74,7 +73,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         if (entities != null) {
 
             for (ExecutionEntity entity : entities) {
-                UserTask userTask = findActElement(entity);
+                UserTask userTask = definition.findNode(entity.getNodeFullId());
 
                 ExecutionTaskImpl executionTask = new ExecutionTaskImpl(entity.getId(), userTask.getId(),
                         userTask.getName(), userTask.getType(), this);
@@ -84,10 +83,6 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
             }
         }
         return tasks;
-    }
-
-    private <T extends Node> T findActElement(ExecutionEntity entity) {
-        return (T) definition.findNode(entity.getActFullId());
     }
 
     @Override
@@ -113,12 +108,12 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         setVariables(variables);
 
         ExecutionEntity executionEntity = entityManager.loadExecution(executionTaskId);
-        UserTask node = findActElement(executionEntity);
+        UserTask userTask = definition.findNode(executionEntity.getNodeFullId());
 
-        ASFDefinition def = definition.getSubDefinition(executionEntity.getActFullId());
+        ASFDefinition def = definition.getSubDefinition(userTask.getParent().getId());
 
         if (def == null) {
-            throw new ASFException("Not found the process definition :" + executionEntity.getActFullId());
+            throw new ASFException("Not found the process definition :" + executionEntity.getNodeFullId());
         }
 
         ProcessorContextImpl context = new ProcessorContextImpl();
@@ -127,7 +122,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         context.setEntityManager(entityManager);
         context.setExecutionTaskId(executionTaskId);
 
-        executor.execute(context, new CompleteCommand(node));
+        executor.execute(context, new CompleteCommand(userTask));
     }
 
     @Override

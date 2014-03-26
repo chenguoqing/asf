@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -71,7 +72,7 @@ public class SpringJdbcEntityManager implements EntityManager {
         public void setEntity(SqlRowSet rowSet, ExecutionEntity entity) throws SQLException {
             entity.setId(rowSet.getInt(1));
             entity.setInstanceId(rowSet.getLong(2));
-            entity.setActFullId(rowSet.getString(3));
+            entity.setNodeFullId(rowSet.getString(3));
             entity.setActType(ActType.get(rowSet.getInt(4)));
             entity.setCreated(rowSet.getTimestamp(5));
             entity.setModified(rowSet.getTimestamp(6));
@@ -87,18 +88,23 @@ public class SpringJdbcEntityManager implements EntityManager {
             entity.setId(rs.getLong(1));
             entity.setInstanceId(rs.getLong(2));
             entity.setName(rs.getString(3));
-            entity.setDouble(rs.getDouble(4));
-            entity.setLong(rs.getLong(5));
-            entity.setString(rs.getString(6));
 
             VariableEntity.VariableType type = VariableEntity.VariableType.get(rs.getInt(8));
-            if (type == VariableEntity.VariableType.OBJECT) {
+            if (type == VariableEntity.VariableType.LONG) {
+                entity.setLong(rs.getLong(5));
+            } else if (type == VariableEntity.VariableType.BOOLEAN) {
+                entity.setBoolean(rs.getLong(5) == 1L);
+            } else if (type == VariableEntity.VariableType.DOUBLE) {
+                entity.setDouble(rs.getDouble(4));
+            } else if (type == VariableEntity.VariableType.STRING) {
+                entity.setString(rs.getString(5));
+            } else if (type == VariableEntity.VariableType.OBJECT) {
                 entity.setObject(rs.getObject(7));
             }
-            entity.setType(type);
-            entity.setVersion(rs.getInt(9));
-            entity.setCreated(rs.getTimestamp(10));
-            entity.setModified(rs.getTimestamp(11));
+            entity.setVariableClass(VariableEntity.VariableClass.get(rs.getInt(9)));
+            entity.setVersion(rs.getInt(10));
+            entity.setCreated(rs.getTimestamp(11));
+            entity.setModified(rs.getTimestamp(12));
         }
     }
 
@@ -161,7 +167,7 @@ public class SpringJdbcEntityManager implements EntityManager {
                     throw new RuntimeException(e);
                 }
             } else {
-                throw new EntityNotFoundException(0, "Not found the InstanceEntity by id:" + 0);
+                throw new EntityNotFoundException(0, "Not found the Entity by :" + Arrays.toString(args));
             }
         } catch (DataAccessException e) {
             throw new ASFPersistenceException("Failed to load instance " + entityClass.getName(), e);
@@ -226,7 +232,7 @@ public class SpringJdbcEntityManager implements EntityManager {
             @Override
             public void setPreparedStatement(PreparedStatement statement, ExecutionEntity entity) throws SQLException {
                 statement.setLong(1, executionEntity.getInstanceId());
-                statement.setString(2, executionEntity.getActFullId());
+                statement.setString(2, executionEntity.getNodeFullId());
                 statement.setInt(3, executionEntity.getActType().type);
             }
         });
@@ -300,7 +306,7 @@ public class SpringJdbcEntityManager implements EntityManager {
 
     @Override
     public void createVariable(VariableEntity variable) {
-        createEntity(SQLConstants.ASF_CREATE_VARIABLE, variable, new StatementSetter<VariableEntity>() {
+        createEntity(SQLConstants.getCreateVariableSQL(variable), variable, new StatementSetter<VariableEntity>() {
             @Override
             public void setPreparedStatement(PreparedStatement statement, VariableEntity entity) throws SQLException {
                 statement.setLong(1, entity.getInstanceId());
@@ -308,19 +314,10 @@ public class SpringJdbcEntityManager implements EntityManager {
 
                 if (entity.getType() == VariableEntity.VariableType.DOUBLE) {
                     statement.setDouble(3, entity.getDouble());
-                    statement.setLong(4, 0);
-                    statement.setString(5, null);
-                    statement.setBlob(6, (Blob) null);
-                } else if (entity.getType() == VariableEntity.VariableType.LONG) {
-                    statement.setDouble(3, 0);
-                    statement.setLong(4, entity.getLong());
-                    statement.setString(5, null);
-                    statement.setBlob(6, (Blob) null);
+                } else if (entity.getType() == VariableEntity.VariableType.LONG || entity.getType() == VariableEntity.VariableType.BOOLEAN) {
+                    statement.setLong(3, entity.getLong());
                 } else if (entity.getType() == VariableEntity.VariableType.STRING) {
-                    statement.setDouble(3, 0);
-                    statement.setLong(4, 0);
-                    statement.setString(5, entity.getString());
-                    statement.setBlob(6, (Blob) null);
+                    statement.setString(3, entity.getString());
                 } else {
                     ByteArrayOutputStream bous = new ByteArrayOutputStream();
                     try {
@@ -329,17 +326,13 @@ public class SpringJdbcEntityManager implements EntityManager {
                     } catch (Exception e) {
                         //ignore
                     }
-                    statement.setDouble(3, 0);
-                    statement.setLong(4, 0);
-                    statement.setString(5, null);
-
                     final byte[] b = bous.toByteArray();
-                    statement.setBinaryStream(6, new ByteArrayInputStream(b), b.length);
+                    statement.setBinaryStream(3, new ByteArrayInputStream(b), b.length);
                 }
 
-                statement.setInt(7, entity.getType().value);
-                statement.setInt(8, entity.getVariableClass().value);
-                statement.setInt(9, entity.getVersion());
+                statement.setInt(4, entity.getType().value);
+                statement.setInt(5, entity.getVariableClass().value);
+                statement.setInt(6, entity.getVersion());
             }
         });
     }

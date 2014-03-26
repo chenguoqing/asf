@@ -40,21 +40,21 @@ public class SQLConstants {
      * Load execution entity
      */
     public static final String ASF_LOAD_EXECUTION = "SELECT ID_,INSTANCE_ID_,ACT_FULL_ID_,ACT_TYPE_,GMT_CREATE," +
-            "GMT_MODIFIED FROM ASF_EXECUTION WHERE ID=?";
+            "GMT_MODIFIED FROM ASF_EXECUTION WHERE ID_=?";
 
     /**
      * Delete execution
      */
-    public static final String ASF_DELETE_EXECUTION = "DELETE ASF_EXECUTION WHERE ID_=?";
+    public static final String ASF_DELETE_EXECUTION = "DELETE FROM ASF_EXECUTION WHERE ID_=?";
     /**
      * Delete all executions associated with instance
      */
-    public static final String ASF_DELETE_EXECUTIONS = "DELETE ASF_EXECUTION WHERE INSTANCE_ID_=?";
+    public static final String ASF_DELETE_EXECUTIONS = "DELETE FROM ASF_EXECUTION WHERE INSTANCE_ID_=?";
     /**
      * Load execution entity
      */
     public static final String ASF_FIND_EXECUTIONS = "SELECT ID_,INSTANCE_ID_,ACT_FULL_ID_,ACT_TYPE_,GMT_CREATE," +
-            "GMT_MODIFIED FROM ASF_EXECUTION WHERE INSTANCE_ID=?";
+            "GMT_MODIFIED FROM ASF_EXECUTION WHERE INSTANCE_ID_=?";
 
     /**
      * Create transition entity
@@ -75,6 +75,26 @@ public class SQLConstants {
     public static final String ASF_CREATE_VARIABLE = "INSERT INTO ASF_VARIABLE (INSTANCE_ID_,NAME_,DOUBLE_,LONG_," +
             "STRING_,OBJECT_,TYPE_,CLASS_,VERSION_,GMT_CREATE,GMT_MODIFIED)VALUES(?,?,?,?,?,?,?,?,?,SYSDATE()," +
             "SYSDATE())";
+
+    public static String getCreateVariableSQL(VariableEntity entity) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("INSERT INTO ASF_VARIABLE (INSTANCE_ID_,NAME_,");
+
+        final VariableEntity.VariableType type = entity.getType();
+
+        if (type == VariableEntity.VariableType.LONG || type == VariableEntity.VariableType.BOOLEAN) {
+            sb.append("LONG_");
+        } else if (type == VariableEntity.VariableType.DOUBLE) {
+            sb.append("DOUBLE_");
+        } else if (type == VariableEntity.VariableType.STRING) {
+            sb.append("STRING_");
+        } else {
+            sb.append("OBJECT_");
+        }
+        sb.append(",");
+        sb.append("TYPE_,CLASS_,VERSION_,GMT_CREATE,GMT_MODIFIED)VALUES(?,?,?,?,?,?,SYSDATE(),SYSDATE())");
+        return sb.toString();
+    }
 
     /**
      * Load variable
@@ -109,7 +129,7 @@ public class SQLConstants {
     /**
      * Delete variable
      */
-    public static final String ASF_DELETE_VARIABLE = "DELETE ASF_VARIABLE WHERE INSTANCE_ID_=? AND NAME_=? AND " +
+    public static final String ASF_DELETE_VARIABLE = "DELETE FROM ASF_VARIABLE WHERE INSTANCE_ID_=? AND NAME_=? AND " +
             "CLASS_=?";
 
     public static final String ASF_FIND_VARIABLES = "SELECT ID_,INSTANCE_ID_,NAME_,DOUBLE_,LONG_,STRING_,OBJECT_," +
