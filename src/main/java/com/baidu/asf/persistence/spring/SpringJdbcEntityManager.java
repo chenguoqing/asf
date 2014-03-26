@@ -7,6 +7,7 @@ import com.baidu.asf.persistence.EntityNotFoundException;
 import com.baidu.asf.persistence.MVCCException;
 import com.baidu.asf.persistence.enitity.*;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -133,6 +134,8 @@ public class SpringJdbcEntityManager implements EntityManager {
                     return statement;
                 }
             }, keyHolder);
+        } catch (DuplicateKeyException e) {
+            throw new com.baidu.asf.persistence.DuplicateKeyException(entity, e);
         } catch (DataAccessException e) {
             throw new ASFPersistenceException("Failed to create entity " + entity.getClass().getName(), e);
         }

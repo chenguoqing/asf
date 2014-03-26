@@ -104,11 +104,15 @@ public abstract class AbstractNode implements Node {
         StringBuilder builder = new StringBuilder();
         builder.append(getId());
 
-        Node parent = this.parent;
+        Node node = this;
 
-        while (parent != null) {
-            builder.append("/").append(parent.getId());
+        while (node != null) {
+            builder.insert(0, node.getId());
+            node = node.getParent();
+            if (node != null) {
+                builder.insert(0, "/");
+            }
         }
-        return builder.reverse().toString();
+        return builder.toString();
     }
 }

@@ -2,6 +2,7 @@ package com.baidu.asf.engine;
 
 import com.baidu.asf.engine.command.Command;
 import com.baidu.asf.engine.command.CommandExecutor;
+import com.baidu.asf.persistence.DuplicateKeyException;
 import com.baidu.asf.persistence.EntityManager;
 import com.baidu.asf.persistence.MVCCException;
 import com.baidu.asf.persistence.enitity.VariableEntity;
@@ -68,15 +69,34 @@ public abstract class AbstractVariableContext implements VariableContext, System
         setVariable(name, value, VariableEntity.VariableClass.SYSTEM);
     }
 
-    private void setVariable(final String name, final Object value, final VariableEntity.VariableClass variableClass) {
+    private VariableEntity createVariable(final String name, final Object value, final VariableEntity.VariableClass variableClass) {
         final EntityManager entityManager = getEntityManager();
         final long id = getInstance().getId();
+
+        return executeCommand(new Command<VariableEntity>() {
+            @Override
+            public VariableEntity execute(ProcessorContext context) {
+                VariableEntity variable = new VariableEntity(id, name, value, variableClass);
+                entityManager.createVariable(variable);
+                return variable;
+            }
+        });
+    }
+
+    private void setVariable(final String name, final Object value, final VariableEntity.VariableClass variableClass) {
+        final EntityManager entityManager = getEntityManager();
 
         executeCommand(new Command<Object>() {
             @Override
             public Object execute(ProcessorContext context) {
-                VariableEntity variable = new VariableEntity(id, name, value, variableClass);
-                entityManager.updateVariable(variable);
+                VariableEntity entity = context.getEntityManager().findVariable(context.getInstance().getId(), name,
+                        variableClass);
+
+                if (entity == null) {
+                    createVariable(name, value, variableClass);
+                } else {
+                    entityManager.updateVariable(entity);
+                }
                 return null;
             }
         });
@@ -124,21 +144,26 @@ public abstract class AbstractVariableContext implements VariableContext, System
     private int doIncrementAndGet(String name) {
         final EntityManager entityManager = getEntityManager();
         final long id = getInstance().getId();
-        VariableEntity entity = entityManager.findVariable(id, name, VariableEntity.VariableClass.SYSTEM);
-
-        if (entity != null) {
-            setVariable(name, 1, VariableEntity.VariableClass.SYSTEM);
-            return 1;
-        }
-
-        int value = entity.getLong().intValue();
-
         try {
-            setVariable(name, value + 1, VariableEntity.VariableClass.SYSTEM);
-        } catch (MVCCException e) {
-            return doIncrementAndGet(name);
+            VariableEntity entity = entityManager.findVariable(id, name, VariableEntity.VariableClass.SYSTEM);
+
+            if (entity == null) {
+                createVariable(name, 1, VariableEntity.VariableClass.SYSTEM);
+                return 1;
+            }
+
+            int value = entity.getLong().intValue();
+
+            // update persist
+            entityManager.updateVariable(entity);
+
+            return value;
+        } catch (RuntimeException e) {
+            if (e instanceof DuplicateKeyException || e instanceof MVCCException) {
+                return doIncrementAndGet(name);
+            }
+            throw e;
         }
-        return value;
     }
 
     private <T> T executeCommand(Command<T> command) {

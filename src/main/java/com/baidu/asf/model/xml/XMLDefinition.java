@@ -226,7 +226,7 @@ public class XMLDefinition extends AbstractASFDefinition {
 
         final XMLDefinition parent = definitionStack.peek().definition;
         XMLDefinition subDefinition = new XMLDefinition(parent);
-        parent.addSubDefinition(subDefinition);
+        parent.addSubDefinition(element.attributeValue(ATTR_ID), subDefinition);
 
         definitionStack.push(new StackEntry(subDefinition, subProcess));
         parse(element);

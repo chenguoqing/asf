@@ -38,25 +38,30 @@ public class ASFEngineImpl implements ASFEngine {
 
         definition.build();
 
-        InstanceEntity entity = new InstanceEntity();
-        entity.setDefId(definition.getId());
-        entity.setDefVersion(definition.getVersion());
-        entity.setStatus(ASFInstance.ASFStatus.ACTIVE.value);
-        // create instance
-        entityManager.createASFInstance(entity);
-
-        ASFInstance instance = new ASFInstanceImpl(entity.getId(), definition, entityManager, executor);
-        instance.setVariables(variables);
-
-        ProcessorContextImpl context = new ProcessorContextImpl();
-        context.setDefinition(definition);
-        context.setInstance(instance);
+        final ProcessorContextImpl context = new ProcessorContextImpl();
         context.setEntityManager(entityManager);
-        // start process
-        ExecutionProcessor processor = ExecutionProcessorRegister.getProcessor(ActType.StartEvent);
-        processor.doOutgoing(context, definition.getStartEvent());
+        context.setDefinition(definition);
+        return executor.execute(context, new Command<ASFInstance>() {
+            @Override
+            public ASFInstance execute(ProcessorContext context) {
+                InstanceEntity entity = new InstanceEntity();
+                entity.setDefId(definition.getId());
+                entity.setDefVersion(definition.getVersion());
+                entity.setStatus(ASFInstance.ASFStatus.ACTIVE.value);
+                // create instance
+                entityManager.createASFInstance(entity);
 
-        return instance;
+                ASFInstance instance = new ASFInstanceImpl(entity.getId(), definition, entityManager, executor);
+                instance.setVariables(variables);
+
+                ((ProcessorContextImpl) context).setInstance(instance);
+                // start process
+                ExecutionProcessor processor = ExecutionProcessorRegister.getProcessor(ActType.StartEvent);
+                processor.doOutgoing(context, definition.getStartEvent());
+
+                return instance;
+            }
+        });
     }
 
     @Override

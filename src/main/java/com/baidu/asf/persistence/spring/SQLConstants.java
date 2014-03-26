@@ -34,12 +34,12 @@ public class SQLConstants {
      * ASF create execution
      */
     public static final String ASF_CREATE_EXECUTION = "INSERT INTO ASF_EXECUTION (INSTANCE_ID_,ACT_FULL_ID_," +
-            "ACT_TYPE_,GMT_CREATED,GMT_MODIFIED)VALUES(?,?,?,SYSDATE(),SYSDATE())";
+            "ACT_TYPE_,GMT_CREATE,GMT_MODIFIED)VALUES(?,?,?,SYSDATE(),SYSDATE())";
 
     /**
      * Load execution entity
      */
-    public static final String ASF_LOAD_EXECUTION = "SELECT ID_,INSTANCE_ID_,ACT_FULL_ID_,ACT_TYPE_,GMT_CREATED," +
+    public static final String ASF_LOAD_EXECUTION = "SELECT ID_,INSTANCE_ID_,ACT_FULL_ID_,ACT_TYPE_,GMT_CREATE," +
             "GMT_MODIFIED FROM ASF_EXECUTION WHERE ID=?";
 
     /**
@@ -53,7 +53,7 @@ public class SQLConstants {
     /**
      * Load execution entity
      */
-    public static final String ASF_FIND_EXECUTIONS = "SELECT ID_,INSTANCE_ID_,ACT_FULL_ID_,ACT_TYPE_,GMT_CREATED," +
+    public static final String ASF_FIND_EXECUTIONS = "SELECT ID_,INSTANCE_ID_,ACT_FULL_ID_,ACT_TYPE_,GMT_CREATE," +
             "GMT_MODIFIED FROM ASF_EXECUTION WHERE INSTANCE_ID=?";
 
     /**
@@ -73,14 +73,14 @@ public class SQLConstants {
      * Create variable
      */
     public static final String ASF_CREATE_VARIABLE = "INSERT INTO ASF_VARIABLE (INSTANCE_ID_,NAME_,DOUBLE_,LONG_," +
-            "STRING_,OBJECT_,TYPE_,CLASS_,VERSION_,GMT_CREATED,GMT_MODIFIED)VALUES(?,?,?,?,?,?,?,?,?,SYSDATE()," +
+            "STRING_,OBJECT_,TYPE_,CLASS_,VERSION_,GMT_CREATE,GMT_MODIFIED)VALUES(?,?,?,?,?,?,?,?,?,SYSDATE()," +
             "SYSDATE())";
 
     /**
      * Load variable
      */
     public static final String ASF_LOAD_VARIABLE = "SELECT ID_,INSTANCE_ID_,NAME_,DOUBLE_,LONG_,STRING_,OBJECT_," +
-            "TYPE_,CLASS_,VERSION_,GMT_CREATED,GMT_MODIFIED FROM ASF_VARIABLE WHERE INSTANCE_ID_=? AND NAME_=? AND " +
+            "TYPE_,CLASS_,VERSION_,GMT_CREATE,GMT_MODIFIED FROM ASF_VARIABLE WHERE INSTANCE_ID_=? AND NAME_=? AND " +
             "CLASS_=?";
 
     public static String getUpdateVariableSQL(VariableEntity entity) {
@@ -97,10 +97,12 @@ public class SQLConstants {
         }
 
         sb.append(",");
-        sb.append("SET TYPE_=?");
+        sb.append(" TYPE_=?");
         sb.append(",");
-        sb.append("SET VERSION_=?");
-        sb.append("WHERE ID_=? AND VERSION_=?");
+        sb.append(" VERSION_=?");
+        sb.append(",");
+        sb.append(" GMT_MODIFIED=SYSDATE()");
+        sb.append(" WHERE ID_=? AND VERSION_=?");
         return sb.toString();
     }
 
@@ -111,5 +113,5 @@ public class SQLConstants {
             "CLASS_=?";
 
     public static final String ASF_FIND_VARIABLES = "SELECT ID_,INSTANCE_ID_,NAME_,DOUBLE_,LONG_,STRING_,OBJECT_," +
-            "TYPE_,CLASS_,VERSION_,GMT_CREATED,GMT_MODIFIED FROM ASF_VARIABLE WHERE INSTANCE_ID_=?";
+            "TYPE_,CLASS_,VERSION_,GMT_CREATE,GMT_MODIFIED FROM ASF_VARIABLE WHERE INSTANCE_ID_=?";
 }

@@ -12,8 +12,17 @@ public class CacheCommandInterceptor extends AbstractCommandInterceptor {
     @Override
     public <T> T execute(ProcessorContext context, Command<T> command) {
         final EntityManager entityManager = context.getEntityManager();
-        final boolean canCache = !Boolean.valueOf((String) context.getParam(ProcessorContext.ParamKeys.DisabledCache
-                .paramName));
+        Object cacheDisable = context.getParam(ProcessorContext.ParamKeys.DisabledCache.paramName);
+
+        boolean canCache = true;
+        if (cacheDisable != null) {
+            if (cacheDisable instanceof Boolean) {
+                canCache = (Boolean) cacheDisable;
+            } else {
+                canCache = Boolean.valueOf(cacheDisable.toString());
+            }
+        }
+
         if (canCache && entityManager != null && !(entityManager instanceof
                 CachedEntityManagerHandler)) {
             context.setEntityManager(new CachedEntityManagerHandler(entityManager).getProxy());

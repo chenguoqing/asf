@@ -80,10 +80,6 @@ public abstract class AbstractASFDefinition implements ASFDefinition {
         flows.add(flow);
     }
 
-    public List<Flow> getFlows() {
-        return new ArrayList<Flow>(flows);
-    }
-
     @Override
     public <T extends Node> T findNode(String nodeFullId) {
         if (nodeFullId == null) {
@@ -121,8 +117,8 @@ public abstract class AbstractASFDefinition implements ASFDefinition {
         return parent;
     }
 
-    public void addSubDefinition(ASFDefinition subDefinition) {
-        this.subDefinitions.put(subDefinition.getId(), subDefinition);
+    protected void addSubDefinition(String subProcessId, ASFDefinition subDefinition) {
+        this.subDefinitions.put(subProcessId, subDefinition);
     }
 
     @Override

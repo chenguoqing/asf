@@ -20,6 +20,7 @@ public class DefaultSubProcessProcessor extends AbstractExecutionProcessor imple
 
         ProcessorContextImpl subContext = new ProcessorContextImpl();
         subContext.setDefinition(subProcessDefinition);
+        subContext.setEntityManager(context.getEntityManager());
         subContext.addParams(context.getParams());
         subContext.setInstance(context.getInstance());
 
