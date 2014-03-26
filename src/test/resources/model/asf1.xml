@@ -33,11 +33,14 @@
         <sequenceFlow sourceRef="DeveloperTask" targetRef="TestTask"/>
 
         <userTask id="TestTask" name="Test solution">
+            <listener class="com.baidu.model.TestTaskListener"/>
         </userTask>
 
         <sequenceFlow sourceRef="TestTask" targetRef="TestOK"/>
 
-        <exclusiveGateway id="TestOK"/>
+        <exclusiveGateway id="TestOK">
+            <listener class="com.baidu.model.CommonLogListener"/>
+        </exclusiveGateway>
 
         <sequenceFlow sourceRef="TestOK" targetRef="DeveloperReady">
             <conditionExpression>
