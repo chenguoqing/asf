@@ -1,11 +1,13 @@
 package com.baidu.asf.persistence.spring;
 
+import com.baidu.asf.ASFException;
 import com.baidu.asf.model.ActType;
 import com.baidu.asf.persistence.ASFPersistenceException;
 import com.baidu.asf.persistence.EntityManager;
 import com.baidu.asf.persistence.EntityNotFoundException;
 import com.baidu.asf.persistence.MVCCException;
 import com.baidu.asf.persistence.enitity.*;
+import com.baidu.asf.util.ByteArrayObjectLoader;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,9 +17,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import javax.sql.DataSource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,9 +97,14 @@ public class SpringJdbcEntityManager implements EntityManager {
             } else if (type == VariableEntity.VariableType.DOUBLE) {
                 entity.setDouble(rs.getDouble(4));
             } else if (type == VariableEntity.VariableType.STRING) {
-                entity.setString(rs.getString(5));
+                entity.setString(rs.getString(6));
             } else if (type == VariableEntity.VariableType.OBJECT) {
-                entity.setObject(rs.getObject(7));
+                Object obj = rs.getObject(7);
+
+                if (obj instanceof byte[]) {
+                    obj = new ByteArrayObjectLoader<Object>((byte[]) obj);
+                }
+                entity.setObject(obj);
             }
             entity.setVariableClass(VariableEntity.VariableClass.get(rs.getInt(9)));
             entity.setVersion(rs.getInt(10));

@@ -8,6 +8,7 @@ import com.baidu.asf.engine.command.GetExecutionPathCommand;
 import com.baidu.asf.model.ASFDefinition;
 import com.baidu.asf.model.UserTask;
 import com.baidu.asf.persistence.EntityManager;
+import com.baidu.asf.persistence.EntityNotFoundException;
 import com.baidu.asf.persistence.MVCCException;
 import com.baidu.asf.persistence.enitity.ExecutionEntity;
 import com.baidu.asf.persistence.enitity.InstanceEntity;
@@ -107,7 +108,14 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         // save variables
         setVariables(variables);
 
-        ExecutionEntity executionEntity = entityManager.loadExecution(executionTaskId);
+        ExecutionEntity executionEntity;
+
+        try {
+            executionEntity = entityManager.loadExecution(executionTaskId);
+        } catch (EntityNotFoundException e) {
+            throw new ASFConcurrentModificationException(this, "Not found the user task id:" + e.id);
+        }
+
         UserTask userTask = definition.findNode(executionEntity.getNodeFullId());
 
         ASFDefinition def = definition.getSubDefinition(userTask.getParent().getId());
@@ -130,9 +138,8 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         if (instanceEntity.getStatus() != ASFStatus.ACTIVE.value) {
             throw new ASFStatusException("Can't pause a non-active doOutgoing.");
         }
-        instanceEntity.setStatus(ASFStatus.SUSPEND.value);
 
-        executeUpdateInstanceStatus();
+        setStatus(ASFStatus.SUSPEND);
     }
 
     @Override
@@ -140,12 +147,14 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         if (instanceEntity.getStatus() != ASFStatus.ACTIVE.value) {
             throw new ASFStatusException("Can't resume a non-suspend doOutgoing.");
         }
-        instanceEntity.setStatus(ASFStatus.ACTIVE.value);
-
-        executeUpdateInstanceStatus();
+        setStatus(ASFStatus.ACTIVE);
     }
 
-    private void executeUpdateInstanceStatus() {
+    /**
+     * Update the instance status with transaction,the status validation should be made before invocation
+     */
+    public void setStatus(ASFStatus status) {
+        instanceEntity.setStatus(status.value);
         ProcessorContextImpl context = new ProcessorContextImpl();
         context.setDefinition(definition);
         context.setInstance(this);

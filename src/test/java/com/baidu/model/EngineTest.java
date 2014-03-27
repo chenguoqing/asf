@@ -42,13 +42,25 @@ public class EngineTest {
 
     @Test
     public void testComplete() {
-        ASFInstance instance = engineProxy.findASFInstance(34);
+        ASFInstance instance = engineProxy.startASFInstance();
         Assert.assertNotNull(instance);
+
+        // current is DeveloperTask
         List<ExecutionTask> tasks = instance.getTasks();
         Assert.assertNotNull(tasks);
         Assert.assertEquals(tasks.size(), 1);
 
+        // goto test task
         ExecutionTask task = tasks.iterator().next();
+        task.complete();
+
+        // current is DeveloperReady
+        tasks = instance.getTasks();
+        Assert.assertNotNull(tasks);
+        Assert.assertEquals(tasks.size(), 1);
+
+        // goto sub end
+        task = tasks.iterator().next();
         task.complete();
     }
 }

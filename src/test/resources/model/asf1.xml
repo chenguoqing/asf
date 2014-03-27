@@ -43,15 +43,11 @@
         </exclusiveGateway>
 
         <sequenceFlow sourceRef="TestOK" targetRef="DeveloperReady">
-            <conditionExpression>
-                ${solutionApproved == true}
-            </conditionExpression>
+            <conditionExpression expression="solutionApproved"/>
         </sequenceFlow>
 
         <sequenceFlow sourceRef="TestOK" targetRef="DeveloperTask">
-            <conditionExpression>
-                ${solutionApproved == false}
-            </conditionExpression>
+            <conditionExpression expression="!solutionApproved"/>
         </sequenceFlow>
 
         <serviceTask id="DeveloperReady">
@@ -70,5 +66,8 @@
     </parallelGateway>
 
     <sequenceFlow sourceRef="joinGateway" targetRef="theEnd"/>
-    <endEvent id="theEnd"/>
+
+    <endEvent id="theEnd">
+        <listener class="com.baidu.model.CommonLogListener"/>
+    </endEvent>
 </process>

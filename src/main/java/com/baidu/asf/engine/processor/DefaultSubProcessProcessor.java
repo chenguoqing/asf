@@ -68,6 +68,6 @@ public class DefaultSubProcessProcessor extends AbstractExecutionProcessor imple
         traceExecution(parentContext, endEvent, subContext.getDefinition().getEndEvent(), flow);
 
         // switch the process context to parent and continue
-        doOutgoing(parentContext, endEvent);
+        doOutgoing(parentContext, endEvent.getParent());
     }
 }

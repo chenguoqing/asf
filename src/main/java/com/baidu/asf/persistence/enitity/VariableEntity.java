@@ -1,5 +1,7 @@
 package com.baidu.asf.persistence.enitity;
 
+import com.baidu.asf.util.ObjectLazyLoader;
+
 /**
  * Variable entity
  */
@@ -83,6 +85,10 @@ public class VariableEntity extends Entity {
      * Object value
      */
     private Object oValue;
+    /**
+     * Object stream
+     */
+    private byte[] objBytes;
     /**
      * Variable type
      */
@@ -190,6 +196,9 @@ public class VariableEntity extends Entity {
         }
 
         if (type == VariableType.OBJECT) {
+            if (oValue instanceof ObjectLazyLoader) {
+                return ((ObjectLazyLoader) oValue).getObject();
+            }
             return oValue;
         }
 

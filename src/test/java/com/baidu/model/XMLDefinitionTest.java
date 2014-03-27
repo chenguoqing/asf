@@ -16,7 +16,7 @@ public class XMLDefinitionTest {
 
         Node node = definition.findNode("developerSubProcess/DeveloperTask");
         Assert.assertNotNull(node);
-        Assert.assertEquals(node.getFullId(),"developerSubProcess/DeveloperTaskDeveloperTask");
+        Assert.assertEquals(node.getFullId(), "developerSubProcess/DeveloperTask");
         System.out.println(node.getFullId());
     }
 }

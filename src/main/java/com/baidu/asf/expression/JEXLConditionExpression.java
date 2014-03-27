@@ -14,6 +14,13 @@ public class JEXLConditionExpression implements ConditionExpression {
     private String expression;
     private Expression jexlExpression;
 
+    public JEXLConditionExpression() {
+    }
+
+    public JEXLConditionExpression(String expression) {
+        this.expression = expression;
+    }
+
     @Override
     public void setExpression(String expression) {
         if (expression != null) {

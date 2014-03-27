@@ -95,6 +95,7 @@ public abstract class AbstractVariableContext implements VariableContext, System
                 if (entity == null) {
                     createVariable(name, value, variableClass);
                 } else {
+                    entity.setVariable(name, value);
                     entityManager.updateVariable(entity);
                 }
                 return null;
@@ -152,7 +153,10 @@ public abstract class AbstractVariableContext implements VariableContext, System
                 return 1;
             }
 
-            int value = entity.getLong().intValue();
+            int value = entity.getLong().intValue() + 1;
+
+            // increment value
+            entity.setVariable(name, value);
 
             // update persist
             entityManager.updateVariable(entity);

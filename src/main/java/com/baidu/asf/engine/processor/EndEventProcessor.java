@@ -1,5 +1,7 @@
 package com.baidu.asf.engine.processor;
 
+import com.baidu.asf.engine.ASFInstance;
+import com.baidu.asf.engine.ASFInstanceImpl;
 import com.baidu.asf.engine.ProcessorContext;
 import com.baidu.asf.model.ActType;
 import com.baidu.asf.model.Flow;
@@ -9,16 +11,27 @@ import com.baidu.asf.model.Node;
  * {@link EndEventProcessor}
  */
 public class EndEventProcessor extends AbstractExecutionProcessor {
+    private static final String VARIABLE_END_COUNT = "_endCount";
+
     @Override
     public void doIncoming(ProcessorContext context, Node node, Node from, Flow flow) {
         super.doIncoming(context, node, from, flow);
 
-        // If the EndEvent belongs to top process, it should remove all execution associated current instance
+        // If current process is top process
         if (node.getParent() == null) {
-            context.getEntityManager().removeExecutions(context.getInstance().getId());
-        }
+            // end the process
+            if (node.getPredecessors().size() > 1) {
+                String variableName = node.getFullId() + VARIABLE_END_COUNT;
+                int count = context.getInstance().incrementAndGet(variableName);
+                if (count < node.getPredecessors().size()) {
+                    return;
+                }
+            }
 
-        doOutgoing(context, node);
+            ((ASFInstanceImpl) context.getInstance()).setStatus(ASFInstance.ASFStatus.ENDED);
+        } else {
+            doOutgoing(context, node);
+        }
     }
 
     @Override

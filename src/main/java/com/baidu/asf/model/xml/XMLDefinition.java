@@ -28,7 +28,7 @@ public class XMLDefinition extends AbstractASFDefinition {
     public static final String ELEMENT_EXCLUSIVE_GATEWAY = "exclusiveGateway";
     public static final String ELEMENT_INCLUSIVE_GATEWAY = "inclusiveGateway";
     public static final String ELEMENT_FLOW = "sequenceFlow";
-    public static final String ELEMENT_CONDITION = "condition";
+    public static final String ELEMENT_CONDITION = "conditionExpression";
     public static final String ELEMENT_SUBPROCESS = "subProcess";
 
     public static final String ATTR_ID = "id";
