@@ -388,7 +388,11 @@ public class SpringJdbcEntityManager implements EntityManager {
 
     @Override
     public void clearVariables(long instanceId, VariableEntity.VariableClass variableClass) {
-        //TODO:
+        try {
+            jdbcTemplate.update(SQLConstants.ASF_CLEAR_VARIABLES, instanceId, variableClass.value);
+        } catch (DataAccessException e) {
+            throw new ASFPersistenceException("Failed to clear variables", e);
+        }
     }
 
     @Override

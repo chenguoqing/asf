@@ -20,6 +20,11 @@ public interface SystemVariableContext {
     void removeSystemVariable(String name);
 
     /**
+     * Remove all system variables
+     */
+    void clearSystemVariables();
+
+    /**
      * Atomically increments by one the current value.
      */
     int incrementAndGet(String name);

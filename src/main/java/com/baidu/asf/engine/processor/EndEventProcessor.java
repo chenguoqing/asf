@@ -27,8 +27,12 @@ public class EndEventProcessor extends AbstractExecutionProcessor {
                     return;
                 }
             }
-
+            // mark process instance end
             ((ASFInstanceImpl) context.getInstance()).setStatus(ASFInstance.ASFStatus.ENDED);
+
+            // clear all user and system variables
+            context.getInstance().clearVariables();
+            context.getInstance().clearSystemVariables();
         } else {
             doOutgoing(context, node);
         }

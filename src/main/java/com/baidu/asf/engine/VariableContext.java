@@ -25,4 +25,9 @@ public interface VariableContext {
      * Remove variable by name
      */
     void removeVariable(String name);
+
+    /**
+     * Clear all variables
+     */
+    void clearVariables();
 }

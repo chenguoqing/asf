@@ -51,14 +51,19 @@ public abstract class AbstractVariableContext implements VariableContext, System
         });
     }
 
-    private void removeVariable(final String name, final VariableEntity.VariableClass variableClass) {
+    @Override
+    public void clearVariables() {
+        clearVariables(VariableEntity.VariableClass.USER);
+    }
+
+    public void clearVariables(final VariableEntity.VariableClass variableClass) {
         final EntityManager entityManager = getEntityManager();
         final long id = getInstance().getId();
 
         executeCommand(new Command<Object>() {
             @Override
             public Object execute(ProcessorContext context) {
-                entityManager.removeVariable(id, name, VariableEntity.VariableClass.USER);
+                entityManager.clearVariables(id, variableClass);
                 return null;
             }
         });
@@ -128,6 +133,11 @@ public abstract class AbstractVariableContext implements VariableContext, System
         final EntityManager entityManager = getEntityManager();
         final long id = getInstance().getId();
         entityManager.removeVariable(id, name, VariableEntity.VariableClass.SYSTEM);
+    }
+
+    @Override
+    public void clearSystemVariables() {
+        clearVariables(VariableEntity.VariableClass.SYSTEM);
     }
 
     @Override
