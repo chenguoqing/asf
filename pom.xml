@@ -18,7 +18,7 @@
         <com.mysql.jdbc>5.1.28</com.mysql.jdbc>
         <jackson.version>1.9.13</jackson.version>
         <jexl.version>2.1.1</jexl.version>
-        <dom4j.version>20040902.021138</dom4j.version>
+        <digester.version>3.2</digester.version>
     </properties>
 
     <dependencies>
@@ -53,9 +53,15 @@
             <version>${jexl.version}</version>
         </dependency>
         <dependency>
-            <groupId>dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>${dom4j.version}</version>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-digester3</artifactId>
+            <version>${digester.version}</version>
         </dependency>
         <!-- test -->
         <dependency>
