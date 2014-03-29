@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process id="testASF1" name="test asf" description="test description" version="1">
+<process id="testASF1" description="test description" version="1">
     <startEvent id="theStart"/>
 
     <sequenceFlow sourceRef="theStart" targetRef="LogIssue"/>
 
-    <serviceTask id="LogIssue" scriptFormat="groovy">
+    <serviceTask id="LogIssue">
         <listener class="com.baidu.model.LogIssueListener"/>
     </serviceTask>
 
