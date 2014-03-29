@@ -65,7 +65,7 @@ public class DefaultSubProcessProcessor extends AbstractExecutionProcessor imple
         Flow flow = new SequenceFlow(endEvent.getFullId(), subProcess.getFullId());
 
         // tracing execution history
-        traceExecution(parentContext, endEvent, subContext.getDefinition().getEndEvent(), flow);
+        traceTransition(parentContext, endEvent, subContext.getDefinition().getEndEvent(), flow);
 
         // switch the process context to parent and continue
         doOutgoing(parentContext, endEvent.getParent());

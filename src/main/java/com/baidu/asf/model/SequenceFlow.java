@@ -7,10 +7,13 @@ import com.baidu.asf.expression.ConditionExpression;
  * Sequence flow
  */
 public class SequenceFlow implements Flow {
-    private final String sourceRef;
-    private final String targetRef;
-    private final boolean isVirtual;
-    private final ConditionExpression expression;
+    private String sourceRef;
+    private String targetRef;
+    private boolean isVirtual;
+    private ConditionExpression expression;
+
+    public SequenceFlow() {
+    }
 
     public SequenceFlow(String sourceRef, String targetRef) {
         this(sourceRef, targetRef, true, null);
@@ -27,9 +30,17 @@ public class SequenceFlow implements Flow {
         this.expression = expression;
     }
 
+    public void setSourceRef(String sourceRef) {
+        this.sourceRef = sourceRef;
+    }
+
     @Override
     public String getSourceRef() {
         return sourceRef;
+    }
+
+    public void setTargetRef(String targetRef) {
+        this.targetRef = targetRef;
     }
 
     @Override
@@ -37,9 +48,17 @@ public class SequenceFlow implements Flow {
         return targetRef;
     }
 
+    public void setVirtual(boolean isVirtual) {
+        this.isVirtual = isVirtual;
+    }
+
     @Override
     public boolean isVirtual() {
         return isVirtual;
+    }
+
+    public void setExpression(ConditionExpression expression) {
+        this.expression = expression;
     }
 
     @Override

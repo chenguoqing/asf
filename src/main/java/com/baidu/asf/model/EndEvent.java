@@ -4,8 +4,7 @@ package com.baidu.asf.model;
  * End event
  */
 public class EndEvent extends AbstractNode implements Event {
-    public EndEvent(Node parent) {
+    public EndEvent() {
         setActType(ActType.EndEvent);
-        setParent(parent);
     }
 }

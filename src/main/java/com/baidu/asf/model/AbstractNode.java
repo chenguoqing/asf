@@ -90,6 +90,7 @@ public abstract class AbstractNode implements Node {
         return listeners.toArray(new ExecutionListener[0]);
     }
 
+    @Override
     public void setParent(Node parent) {
         this.parent = parent;
     }

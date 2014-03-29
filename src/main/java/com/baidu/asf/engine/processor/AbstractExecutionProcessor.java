@@ -27,7 +27,7 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
     @Override
     public void doIncoming(ProcessorContext context, Node node, Node from, Flow flow) {
         // save transition history
-        traceExecution(context, node, from, flow);
+        traceTransition(context, node, from, flow);
 
         // notify all listeners
         final ExecutionEvent event = new ExecutionEvent(context.getInstance(), from, flow, node);
@@ -40,7 +40,7 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
         }
     }
 
-    protected void traceExecution(ProcessorContext context, Node node, Node from, Flow flow) {
+    protected void traceTransition(ProcessorContext context, Node node, Node from, Flow flow) {
         // save transition history
         TransitionEntity transitionEntity = new TransitionEntity();
         transitionEntity.setInstanceId(context.getInstance().getId());

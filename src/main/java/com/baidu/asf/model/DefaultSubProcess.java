@@ -7,9 +7,8 @@ public class DefaultSubProcess extends AbstractNode implements SubProcess {
 
     private ASFDefinition subDefinition;
 
-    public DefaultSubProcess(Node parent) {
+    public DefaultSubProcess() {
         setActType(ActType.SubProcess);
-        setParent(parent);
     }
 
     public void setSubProcessDefinition(ASFDefinition subDefinition) {

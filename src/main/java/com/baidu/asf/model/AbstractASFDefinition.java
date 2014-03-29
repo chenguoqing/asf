@@ -11,6 +11,7 @@ public abstract class AbstractASFDefinition implements ASFDefinition {
     private String description;
 
     private ASFDefinition parent;
+    private SubProcess parentNode;
     private int version;
     private StartEvent startEvent;
     private EndEvent endEvent;
@@ -35,6 +36,14 @@ public abstract class AbstractASFDefinition implements ASFDefinition {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    public SubProcess getParentNode() {
+        return parentNode;
+    }
+
+    public void setParentNode(SubProcess parentNode) {
+        this.parentNode = parentNode;
     }
 
     public void setVersion(int version) {
@@ -69,6 +78,7 @@ public abstract class AbstractASFDefinition implements ASFDefinition {
             this.endEvent = (EndEvent) node;
         }
         nodes.put(node.getId(), node);
+        node.setParent(parentNode);
     }
 
     @Override

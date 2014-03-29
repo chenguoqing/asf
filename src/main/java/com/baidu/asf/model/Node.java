@@ -51,6 +51,11 @@ public interface Node {
     ActType getType();
 
     /**
+     * Set parent
+     */
+    void setParent(Node parent);
+
+    /**
      * If current nodeId is within sub doOutgoing, the parent nodeId should be the SubProcess,otherwise, return null
      */
     Node getParent();
