@@ -6,7 +6,7 @@
     <import resource="applicationContext-common.xml"/>
 
     <bean id="testDefinition" class="com.baidu.asf.model.xml.XMLDefinition">
-        <constructor-arg value="/model/asf1.xml"/>
+        <constructor-arg value="/model/asf2.xml"/>
     </bean>
 
     <bean class="com.baidu.asf.engine.spring.ASFEngineFactoryBean">

@@ -8,6 +8,8 @@ import com.baidu.asf.persistence.spring.SpringJdbcEntityManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -17,6 +19,7 @@ public class SpringASFEngineConfiguration implements ASFEngineConfiguration {
 
     private DataSource dataSource;
     private PlatformTransactionManager transactionManager;
+    private boolean useCache = true;
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -24,6 +27,10 @@ public class SpringASFEngineConfiguration implements ASFEngineConfiguration {
 
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public void setUseCache(boolean useCache) {
+        this.useCache = useCache;
     }
 
     @Override
@@ -44,13 +51,22 @@ public class SpringASFEngineConfiguration implements ASFEngineConfiguration {
 
     @Override
     public CommandInterceptor buildCommandInterceptor() {
-
+        List<CommandInterceptor> interceptors = new ArrayList<CommandInterceptor>();
         CommandInterceptor transactionInterceptor = new SpringTransactionInterceptor(transactionManager);
         CommandInterceptor cacheInterceptor = new CacheCommandInterceptor();
         CommandInterceptor sink = new CommandSink();
-        transactionInterceptor.setNext(cacheInterceptor);
-        cacheInterceptor.setNext(sink);
 
+        interceptors.add(transactionInterceptor);
+        if (useCache) {
+            interceptors.add(cacheInterceptor);
+        }
+        interceptors.add(sink);
+
+        for (int i = 1; i < interceptors.size(); i++) {
+            CommandInterceptor prev = interceptors.get(i - 1);
+            CommandInterceptor curr = interceptors.get(i);
+            prev.setNext(curr);
+        }
         return transactionInterceptor;
     }
 }

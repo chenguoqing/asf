@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process id="testASF2" description="开发测试流程" version="1">
+    <startEvent id="theStart"/>
+
+    <sequenceFlow sourceRef="theStart" targetRef="codReview"/>
+
+    <serviceTask id="codReview" description="代码Review">
+        <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
+    </serviceTask>
+
+    <sequenceFlow sourceRef="codReview" targetRef="forkGateway"/>
+
+    <inclusiveGateway id="forkGateway" description="测试分发网关">
+        <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
+    </inclusiveGateway>
+
+    <sequenceFlow sourceRef="forkGateway" targetRef="selfTest">
+        <conditionExpression expression="!selfTestPass"/>
+    </sequenceFlow>
+
+    <sequenceFlow sourceRef="forkGateway" targetRef="qaTest">
+        <conditionExpression expression="!qaTestPass"/>
+    </sequenceFlow>
+
+    <sequenceFlow sourceRef="forkGateway" targetRef="opTest">
+        <conditionExpression expression="!opTestPass"/>
+    </sequenceFlow>
+
+    <sequenceFlow sourceRef="forkGateway" targetRef="scmTest">
+        <conditionExpression expression="!scmTestPass"/>
+    </sequenceFlow>
+
+    <serviceTask id="selfTest" description="自测">
+        <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
+    </serviceTask>
+
+    <serviceTask id="qaTest" description="QA测试">
+        <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
+    </serviceTask>
+
+    <serviceTask id="opTest" description="OP测试">
+        <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
+    </serviceTask>
+
+    <serviceTask id="scmTest" description="SCM测试">
+        <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
+    </serviceTask>
+
+    <sequenceFlow sourceRef="selfTest" targetRef="joinGateway"/>
+    <sequenceFlow sourceRef="qaTest" targetRef="joinGateway"/>
+    <sequenceFlow sourceRef="opTest" targetRef="joinGateway"/>
+    <sequenceFlow sourceRef="scmTest" targetRef="joinGateway"/>
+
+    <inclusiveGateway id="joinGateway" description="join网关">
+        <listener class="com.baidu.model.CommonLogListener"/>
+    </inclusiveGateway>
+
+    <sequenceFlow sourceRef="joinGateway" targetRef="deploy">
+        <conditionExpression
+                expression="selfTestPass &amp;&amp; qaTestPass &amp;&amp; opTestPass &amp;&amp; scmTestPass "/>
+    </sequenceFlow>
+
+    <sequenceFlow sourceRef="joinGateway" targetRef="forkGateway">
+        <conditionExpression expression="!selfTestPass || !qaTestPass || !opTestPass || !scmTestPass"/>
+    </sequenceFlow>
+
+    <serviceTask id="deploy" description="上线">
+        <listener class="com.baidu.model.CommonLogListener"/>
+    </serviceTask>
+
+    <sequenceFlow sourceRef="deploy" targetRef="theEnd"/>
+
+    <endEvent id="theEnd">
+        <listener class="com.baidu.model.CommonLogListener"/>
+    </endEvent>
+</process>

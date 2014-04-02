@@ -6,6 +6,7 @@ import com.baidu.asf.engine.ProcessorContext;
 import com.baidu.asf.model.Flow;
 import com.baidu.asf.model.Node;
 import com.baidu.asf.persistence.enitity.TransitionEntity;
+import com.baidu.asf.util.Constants;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -69,10 +70,22 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
 
         for (Iterator<Flow> it = successors.keySet().iterator(); it.hasNext(); ) {
             Flow flow = it.next();
-            if (mode == LeaveMode.PARALLEL || flow.evaluate(context.getInstance())) {
+            if (mode == LeaveMode.PARALLEL) {
                 doLeaving(context, node, flow, successors.get(flow));
-                if (mode == LeaveMode.EXCLUSIVE) {
+            } else if (mode == LeaveMode.EXCLUSIVE) {
+                if (flow.evaluate(context.getInstance())) {
+                    doLeaving(context, node, flow, successors.get(flow));
                     break;
+                }
+            } else {
+                // for inclusive, if the flow is evaluated to true,the flow should be executed
+                if (flow.evaluate(context.getInstance())) {
+                    doLeaving(context, node, flow, successors.get(flow));
+                    // if the flow is evaluated to false,it should mark the target node as no-executions node
+                } else {
+                    Node successor = successors.get(flow);
+                    final String variableName = successor.getFullId() + Constants.VARIABLE_NO_EXECUTION_NODE;
+                    context.getInstance().setSystemVariable(variableName, true);
                 }
             }
         }
