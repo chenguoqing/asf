@@ -7,9 +7,9 @@ import com.baidu.asf.model.Node;
 import java.util.Map;
 
 /**
- * Created by chenguoqing01 on 14-3-6.
+ * The semantic implementation of inclusive gateway
  */
-public class InclusiveGatewayProcessor extends AbstractAutoExecutionProcessor {
+public class InclusiveGatewayProcessor extends AbstractExecutionProcessor {
     private static final String VARIABLE_JOIN_NODE_COUNT = "_joinCount_inclusive";
 
     @Override
@@ -26,7 +26,7 @@ public class InclusiveGatewayProcessor extends AbstractAutoExecutionProcessor {
             Integer count = context.getInstance().incrementAndGet(variableName);
 
             // all predecessors has arrived
-            if (count == node.getPredecessors().size()) {
+            if (count == predecessors.size()) {
                 doOutgoing(context, node);
             }
         }

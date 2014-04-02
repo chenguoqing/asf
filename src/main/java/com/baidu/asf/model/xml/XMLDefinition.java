@@ -24,6 +24,7 @@ public class XMLDefinition extends AbstractASFDefinition {
     private static final String PREFIX_CLASSPATH = "classpath:";
     private static final String PREFIX_FILE = "file:";
 
+    private static final String ELEMENT_PROCESS = "process";
     private static final String ELEMENT_START_EVENT = "startEvent";
     private static final String ELEMENT_END_EVENT = "endEvent";
     private static final String ELEMENT_USER_TASK = "userTask";
@@ -39,10 +40,16 @@ public class XMLDefinition extends AbstractASFDefinition {
     private final String resourcePath;
     private final boolean validate;
 
+    /**
+     * Constructor with validate
+     */
     public XMLDefinition(String resourcePath) {
         this(resourcePath, true);
     }
 
+    /**
+     * Constructor with validate parameter
+     */
     private XMLDefinition(String resourcePath, boolean validate) {
         if (resourcePath == null) {
             throw new IllegalArgumentException();
@@ -51,6 +58,9 @@ public class XMLDefinition extends AbstractASFDefinition {
         this.validate = validate;
     }
 
+    /**
+     * Constructor, only for sub definition
+     */
     private XMLDefinition(XMLDefinition parent) {
         this(parent.resourcePath);
         setParent(parent);
@@ -89,7 +99,7 @@ public class XMLDefinition extends AbstractASFDefinition {
         Digester digester = new Digester();
 
         digester.push(this);
-        digester.addSetProperties("process");
+        digester.addSetProperties(ELEMENT_PROCESS);
 
         addNodeRule(digester, ELEMENT_START_EVENT, StartEvent.class);
         addNodeRule(digester, ELEMENT_USER_TASK, UserTask.class);
@@ -114,12 +124,15 @@ public class XMLDefinition extends AbstractASFDefinition {
         }
     }
 
+    /**
+     * Encapsulate the digester rules for node type
+     */
     private void addNodeRule(Digester digester, String nodeName, Class<? extends Node> nodeClass) {
         final String nodeRule = "*/" + nodeName;
         digester.addObjectCreate(nodeRule, nodeClass);
         digester.addSetProperties(nodeRule);
 
-        // replace the top element of DefaultSubProcess to sub xml definition
+        // push the sub definition to stack and pop it when end element
         if (nodeClass == DefaultSubProcess.class) {
             digester.addRule(nodeRule, new SubProcessDefinitionCreateRule());
             digester.addSetNext(nodeRule, "addNode");
@@ -133,6 +146,9 @@ public class XMLDefinition extends AbstractASFDefinition {
         digester.addSetNext(listenerRule, "addExecutionListener");
     }
 
+    /**
+     * For sequenceFlow rules
+     */
     private void addSequenceFlowRule(Digester digester) {
         final String listenerRule = "*/" + ELEMENT_FLOW;
         digester.addRule(listenerRule, new ObjectCreateRule(SequenceFlow.class));
@@ -145,6 +161,9 @@ public class XMLDefinition extends AbstractASFDefinition {
         digester.addSetNext(expressionRule, "setExpression");
     }
 
+    /**
+     * The rule will push sub definition instance to stack when reach at beginning of "subProcess" node
+     */
     static class SubProcessDefinitionCreateRule extends Rule {
         @Override
         public void begin(String namespace, String name, Attributes attributes) throws Exception {
@@ -160,6 +179,9 @@ public class XMLDefinition extends AbstractASFDefinition {
         }
     }
 
+    /**
+     * The rule will pop the sub definition instance from stack when reaching at the ends of "subProcess" node
+     */
     static class SubProcessDefinitionPopRule extends Rule {
         @Override
         public void end(String namespace, String name) throws Exception {
