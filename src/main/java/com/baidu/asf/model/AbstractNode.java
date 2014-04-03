@@ -11,6 +11,7 @@ import java.util.Map;
  * Common implementation for Node,implementations should driven from this class
  */
 public abstract class AbstractNode implements Node {
+    private ASFDefinition definition;
     private String id;
     private ActType actType;
     private String name;
@@ -19,6 +20,15 @@ public abstract class AbstractNode implements Node {
     protected final List<ExecutionListener> listeners = new ArrayList<ExecutionListener>();
     private Map<Flow, Node> successors = new HashMap<Flow, Node>();
     private Map<Flow, Node> predecessors = new HashMap<Flow, Node>();
+
+    public void setDefinition(ASFDefinition definition) {
+        this.definition = definition;
+    }
+
+    @Override
+    public ASFDefinition getDefinition() {
+        return definition;
+    }
 
     @Override
     public void setId(String id) {

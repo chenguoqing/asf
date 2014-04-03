@@ -10,6 +10,7 @@ public class SequenceFlow implements Flow {
     private String sourceRef;
     private String targetRef;
     private boolean isVirtual;
+    private boolean isDefault;
     private ConditionExpression expression;
 
     public SequenceFlow() {
@@ -55,6 +56,15 @@ public class SequenceFlow implements Flow {
     @Override
     public boolean isVirtual() {
         return isVirtual;
+    }
+
+    public void setDefault(boolean isDefault) {
+        this.isDefault = isDefault;
+    }
+
+    @Override
+    public boolean isDefault() {
+        return isDefault;
     }
 
     public void setExpression(ConditionExpression expression) {

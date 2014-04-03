@@ -9,7 +9,13 @@
         <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
     </serviceTask>
 
-    <sequenceFlow sourceRef="codReview" targetRef="forkGateway"/>
+    <sequenceFlow sourceRef="codReview" targetRef="submitQA"/>
+
+    <serviceTask id="submitQA" description="提交测试">
+        <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
+    </serviceTask>
+
+    <sequenceFlow sourceRef="submitQA" targetRef="forkGateway"/>
 
     <inclusiveGateway id="forkGateway" description="测试分发网关">
         <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
@@ -31,21 +37,21 @@
         <conditionExpression expression="!scmTestPass"/>
     </sequenceFlow>
 
-    <serviceTask id="selfTest" description="自测">
+    <userTask id="selfTest" description="自测">
         <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
-    </serviceTask>
+    </userTask>
 
-    <serviceTask id="qaTest" description="QA测试">
+    <userTask id="qaTest" description="QA测试">
         <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
-    </serviceTask>
+    </userTask>
 
-    <serviceTask id="opTest" description="OP测试">
+    <userTask id="opTest" description="OP测试">
         <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
-    </serviceTask>
+    </userTask>
 
-    <serviceTask id="scmTest" description="SCM测试">
+    <userTask id="scmTest" description="SCM测试">
         <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
-    </serviceTask>
+    </userTask>
 
     <sequenceFlow sourceRef="selfTest" targetRef="joinGateway"/>
     <sequenceFlow sourceRef="qaTest" targetRef="joinGateway"/>
@@ -53,7 +59,7 @@
     <sequenceFlow sourceRef="scmTest" targetRef="joinGateway"/>
 
     <inclusiveGateway id="joinGateway" description="join网关">
-        <listener class="com.baidu.model.CommonLogListener"/>
+        <listener class="com.baidu.asf.engine.InclusiveTestListener"/>
     </inclusiveGateway>
 
     <sequenceFlow sourceRef="joinGateway" targetRef="deploy">
@@ -61,7 +67,7 @@
                 expression="selfTestPass &amp;&amp; qaTestPass &amp;&amp; opTestPass &amp;&amp; scmTestPass "/>
     </sequenceFlow>
 
-    <sequenceFlow sourceRef="joinGateway" targetRef="forkGateway">
+    <sequenceFlow sourceRef="joinGateway" targetRef="submitQA">
         <conditionExpression expression="!selfTestPass || !qaTestPass || !opTestPass || !scmTestPass"/>
     </sequenceFlow>
 

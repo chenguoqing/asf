@@ -9,6 +9,6 @@ import com.baidu.asf.model.Node;
 public class ServiceTaskProcessor extends AbstractAutoExecutionProcessor {
     @Override
     public void doOutgoing(ProcessorContext context, Node node) {
-        leave(context, node, LeaveMode.EXCLUSIVE);
+        doExclusiveLeave(context, node);
     }
 }

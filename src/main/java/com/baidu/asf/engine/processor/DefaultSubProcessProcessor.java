@@ -33,7 +33,7 @@ public class DefaultSubProcessProcessor extends AbstractExecutionProcessor imple
      */
     @Override
     public void doOutgoing(ProcessorContext context, Node node) {
-        leave(context, node, LeaveMode.EXCLUSIVE);
+        doExclusiveLeave(context, node);
     }
 
     @Override

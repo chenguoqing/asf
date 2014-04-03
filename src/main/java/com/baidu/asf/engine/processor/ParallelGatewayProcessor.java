@@ -4,6 +4,7 @@ import com.baidu.asf.engine.ProcessorContext;
 import com.baidu.asf.model.Flow;
 import com.baidu.asf.model.Node;
 
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -35,6 +36,19 @@ public class ParallelGatewayProcessor extends AbstractExecutionProcessor {
 
     @Override
     public void doOutgoing(ProcessorContext context, Node node) {
-        leave(context, node, LeaveMode.PARALLEL);
+        Map<Flow, Node> successors = node.getSuccessors();
+
+        Flow defaultFlow = successors.keySet().iterator().next();
+        Node defaultTarget = successors.get(defaultFlow);
+
+        if (successors.size() == 1) {
+            doLeaving(context, node, defaultFlow, defaultTarget);
+            return;
+        }
+
+        for (Iterator<Flow> it = successors.keySet().iterator(); it.hasNext(); ) {
+            Flow flow = it.next();
+            doLeaving(context, node, flow, successors.get(flow));
+        }
     }
 }

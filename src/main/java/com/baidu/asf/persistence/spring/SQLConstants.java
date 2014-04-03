@@ -27,8 +27,8 @@ public class SQLConstants {
     /**
      * Update instance status
      */
-    public static final String ASF_UPDATE_INSTANCE_STATUS = "UPDATE ASF_INSTANCE SET VERSION_=?," +
-            "STATUS_=? WHERE ID_=? AND VERSION_=?";
+    public static final String ASF_UPDATE_INSTANCE_STATUS = "UPDATE ASF_INSTANCE SET STATUS_=?," +
+            "VERSION_=? WHERE ID_=? AND VERSION_=?";
 
     /**
      * ASF create execution

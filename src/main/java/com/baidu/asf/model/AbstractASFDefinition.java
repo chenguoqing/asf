@@ -79,6 +79,10 @@ public abstract class AbstractASFDefinition implements ASFDefinition {
         }
         nodes.put(node.getId(), node);
         node.setParent(parentNode);
+
+        if (node instanceof AbstractNode) {
+            ((AbstractNode) node).setDefinition(this);
+        }
     }
 
     @Override
@@ -115,7 +119,7 @@ public abstract class AbstractASFDefinition implements ASFDefinition {
                 throw new IllegalArgumentException("node id " + nodeFullId + " is invalidate");
             }
         }
-        return definition == null ? null : (T) definition.getNode(id);
+        return (T) definition.getNode(id);
     }
 
     protected void setParent(ASFDefinition parent) {

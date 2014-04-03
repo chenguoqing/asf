@@ -47,7 +47,7 @@ public interface ASFDefinition {
     ASFDefinition getParent();
 
     /**
-     * Retrieve sub definition
+     * Retrieve sub definition by sub definition id
      */
     ASFDefinition getSubDefinition(String subDefinitionId);
 

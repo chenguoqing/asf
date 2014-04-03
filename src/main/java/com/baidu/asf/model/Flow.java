@@ -16,6 +16,11 @@ public interface Flow {
     boolean isVirtual();
 
     /**
+     * The flow is default?
+     */
+    boolean isDefault();
+
+    /**
      * From node id
      */
     String getSourceRef();

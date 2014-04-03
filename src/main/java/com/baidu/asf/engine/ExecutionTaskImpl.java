@@ -1,6 +1,6 @@
 package com.baidu.asf.engine;
 
-import com.baidu.asf.model.ActType;
+import com.baidu.asf.model.UserTask;
 
 import java.util.Map;
 
@@ -13,32 +13,18 @@ public class ExecutionTaskImpl implements ExecutionTask {
      */
     private final long executionId;
     /**
-     * Act id
+     * Associated node
      */
-    private final String actId;
-    /**
-     * Task name
-     */
-    private final String name;
-    /**
-     * Act type
-     */
-    private final ActType actType;
-    /**
-     * Task description
-     */
-    private String description;
+    private final UserTask userTask;
 
     /**
      * associated instance
      */
     private final ASFInstance instance;
 
-    public ExecutionTaskImpl(long executionId, String actId, String name, ActType actType, ASFInstance instance) {
+    public ExecutionTaskImpl(long executionId, UserTask userTask, ASFInstance instance) {
         this.executionId = executionId;
-        this.name = name;
-        this.actId = actId;
-        this.actType = actType;
+        this.userTask = userTask;
         this.instance = instance;
     }
 
@@ -48,27 +34,8 @@ public class ExecutionTaskImpl implements ExecutionTask {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getActId() {
-        return actId;
-    }
-
-    @Override
-    public ActType getActType() {
-        return actType;
-    }
-
-    void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
+    public UserTask getUserTask() {
+        return userTask;
     }
 
     @Override

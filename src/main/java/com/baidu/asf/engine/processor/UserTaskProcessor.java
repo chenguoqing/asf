@@ -34,7 +34,7 @@ public class UserTaskProcessor extends AbstractExecutionProcessor {
             throw new ASFConcurrentModificationException(context.getInstance());
         }
 
-        // leave UserTask
-        leave(context, node, LeaveMode.EXCLUSIVE);
+        // doExclusiveLeave UserTask
+        doExclusiveLeave(context, node);
     }
 }

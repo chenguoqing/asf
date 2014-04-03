@@ -1,6 +1,6 @@
 package com.baidu.asf.engine;
 
-import com.baidu.asf.model.ActType;
+import com.baidu.asf.model.UserTask;
 
 import java.util.Map;
 
@@ -16,24 +16,9 @@ public interface ExecutionTask {
     long getExecutionId();
 
     /**
-     * Act id
+     * Retrieve associated user task node
      */
-    String getActId();
-
-    /**
-     * ExecutionTask name(act id)
-     */
-    String getName();
-
-    /**
-     * Act type
-     */
-    ActType getActType();
-
-    /**
-     * ExecutionTask description
-     */
-    String getDescription();
+    UserTask getUserTask();
 
     /**
      * Associated doOutgoing instance

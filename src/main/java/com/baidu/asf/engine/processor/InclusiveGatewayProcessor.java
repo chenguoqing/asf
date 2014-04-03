@@ -6,10 +6,17 @@ import com.baidu.asf.model.Node;
 import com.baidu.asf.util.Constants;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
- * The semantic implementation of inclusive gateway
+ * The semantic implementation of inclusive gateway,because of the complication of <b>join</b> behaviour
+ * ({@link com.baidu.asf.model.InclusiveGateway}),only one level back path is supported:
+ * <pre>
+ *     When forks some outgoing sequence flows from inclusive gateway(for node), if some of flows are not be chosen,
+ *     the respective successors can be marked as "no-execution" nodes; when join behaviour occurs on another
+ *     inclusive gateway(join node), it only simply ignore some incoming flows by "no-execution" marks.
+ * </pre>
  */
 public class InclusiveGatewayProcessor extends AbstractExecutionProcessor {
 
@@ -68,12 +75,45 @@ public class InclusiveGatewayProcessor extends AbstractExecutionProcessor {
             }
         }
 
+        // delete "no-execution" nodes mark
+        for (String nodeId : joinMap.keySet()) {
+            JoinType type = joinMap.get(nodeId);
+            if (type == JoinType.NO_EXECUTION) {
+                context.getInstance().removeSystemVariable(nodeId + Constants.VARIABLE_NO_EXECUTION_NODE);
+            }
+        }
+
+        // remove join map variable
+        context.getInstance().removeSystemVariable(joinMapVariableName);
+
         // all predecessors has arrived
         doOutgoing(context, node);
     }
 
     @Override
     public void doOutgoing(ProcessorContext context, Node node) {
-        leave(context, node, LeaveMode.INCLUSIVE);
+        Map<Flow, Node> successors = node.getSuccessors();
+
+        Flow defaultFlow = successors.keySet().iterator().next();
+        Node defaultTarget = successors.get(defaultFlow);
+
+        if (successors.size() == 1) {
+            doLeaving(context, node, defaultFlow, defaultTarget);
+            return;
+        }
+
+        for (Iterator<Flow> it = successors.keySet().iterator(); it.hasNext(); ) {
+            Flow flow = it.next();
+
+            // for inclusive, if the flow is evaluated to true,the flow should be executed
+            if (flow.evaluate(context.getInstance())) {
+                doLeaving(context, node, flow, successors.get(flow));
+                // if the flow is evaluated to false,it should mark the target node as no-executions node
+            } else {
+                Node successor = successors.get(flow);
+                final String variableName = successor.getFullId() + Constants.VARIABLE_NO_EXECUTION_NODE;
+                context.getInstance().setSystemVariable(variableName, true);
+            }
+        }
     }
 }

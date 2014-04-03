@@ -6,7 +6,6 @@ import com.baidu.asf.engine.ProcessorContext;
 import com.baidu.asf.model.Flow;
 import com.baidu.asf.model.Node;
 import com.baidu.asf.persistence.enitity.TransitionEntity;
-import com.baidu.asf.util.Constants;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -15,12 +14,6 @@ import java.util.Map;
  * The abstract implementation will notice all {@link com.baidu.asf.engine.ExecutionListener}
  */
 public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
-
-    static enum LeaveMode {
-        EXCLUSIVE,
-        PARALLEL,
-        INCLUSIVE
-    }
 
     /**
      * Do some common processing for all processors
@@ -57,7 +50,7 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
     /**
      * Leaves current nodeId with mode
      */
-    protected void leave(ProcessorContext context, Node node, LeaveMode mode) {
+    protected void doExclusiveLeave(ProcessorContext context, Node node) {
         Map<Flow, Node> successors = node.getSuccessors();
 
         Flow defaultFlow = successors.keySet().iterator().next();
@@ -68,26 +61,29 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
             return;
         }
 
+        defaultFlow = null;
+        defaultTarget = null;
+
         for (Iterator<Flow> it = successors.keySet().iterator(); it.hasNext(); ) {
             Flow flow = it.next();
-            if (mode == LeaveMode.PARALLEL) {
-                doLeaving(context, node, flow, successors.get(flow));
-            } else if (mode == LeaveMode.EXCLUSIVE) {
-                if (flow.evaluate(context.getInstance())) {
-                    doLeaving(context, node, flow, successors.get(flow));
-                    break;
-                }
-            } else {
-                // for inclusive, if the flow is evaluated to true,the flow should be executed
-                if (flow.evaluate(context.getInstance())) {
-                    doLeaving(context, node, flow, successors.get(flow));
-                    // if the flow is evaluated to false,it should mark the target node as no-executions node
-                } else {
-                    Node successor = successors.get(flow);
-                    final String variableName = successor.getFullId() + Constants.VARIABLE_NO_EXECUTION_NODE;
-                    context.getInstance().setSystemVariable(variableName, true);
-                }
+
+            // default flow condition evaluation will be ignored. If multiple default flow are exists,
+            // the first one will be take
+            if (flow.isDefault() && defaultFlow == null) {
+                defaultFlow = flow;
+                defaultTarget = successors.get(flow);
+                continue;
             }
+
+            if (flow.evaluate(context.getInstance())) {
+                doLeaving(context, node, flow, successors.get(flow));
+                return;
+            }
+        }
+
+        // if the default flow exists
+        if (defaultFlow != null) {
+            doLeaving(context, node, defaultFlow, defaultTarget);
         }
     }
 

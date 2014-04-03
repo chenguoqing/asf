@@ -1,6 +1,5 @@
 package com.baidu.asf.engine;
 
-import com.baidu.asf.ASFException;
 import com.baidu.asf.engine.command.Command;
 import com.baidu.asf.engine.command.CommandExecutor;
 import com.baidu.asf.engine.command.CompleteCommand;
@@ -76,10 +75,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
             for (ExecutionEntity entity : entities) {
                 UserTask userTask = definition.findNode(entity.getNodeFullId());
 
-                ExecutionTaskImpl executionTask = new ExecutionTaskImpl(entity.getId(), userTask.getId(),
-                        userTask.getName(), userTask.getType(), this);
-                executionTask.setDescription(userTask.getDescription());
-
+                ExecutionTaskImpl executionTask = new ExecutionTaskImpl(entity.getId(), userTask, this);
                 tasks.add(executionTask);
             }
         }
@@ -118,14 +114,8 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
 
         UserTask userTask = definition.findNode(executionEntity.getNodeFullId());
 
-        ASFDefinition def = definition.getSubDefinition(userTask.getParent().getId());
-
-        if (def == null) {
-            throw new ASFException("Not found the process definition :" + executionEntity.getNodeFullId());
-        }
-
         ProcessorContextImpl context = new ProcessorContextImpl();
-        context.setDefinition(def);
+        context.setDefinition(userTask.getDefinition());
         context.setInstance(this);
         context.setEntityManager(entityManager);
         context.setExecutionTaskId(executionTaskId);

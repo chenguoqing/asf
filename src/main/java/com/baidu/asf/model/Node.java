@@ -15,6 +15,12 @@ import java.util.Map;
  * </p>
  */
 public interface Node {
+
+    /**
+     * Retrieve associated definition instance
+     */
+    ASFDefinition getDefinition();
+
     /**
      * Unique id
      */
