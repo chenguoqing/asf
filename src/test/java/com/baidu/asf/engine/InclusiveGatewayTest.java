@@ -1,6 +1,7 @@
 package com.baidu.asf.engine;
 
 import com.baidu.asf.engine.spring.ASFEngineProxy;
+import com.baidu.asf.model.Flow;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,6 +51,13 @@ public class InclusiveGatewayTest {
                 _variables.put("scmTestPass", true);
                 task.complete(_variables);
             }
+        }
+
+        List<ExecutionPath> paths = instance.getExecutionPath();
+        Assert.assertNotNull(paths);
+
+        for (ExecutionPath path : paths) {
+            System.out.println(path);
         }
     }
 }

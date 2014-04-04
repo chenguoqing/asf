@@ -33,7 +33,7 @@ public class TestDef2 extends AbstractDSLGraphDef<TestDef2> {
         state("b").addStateListener(new StateListener() {
             @Override
             public void stateChange(StateEvent event) {
-//                System.out.printf("Current state:%s,nodeId state:%s,event:%s\n", event.to.getName(),
+//                System.out.printf("Current state:%s,fromNodeId state:%s,event:%s\n", event.to.getName(),
 //                        event.from.getName(), event.event);
             }
         });
