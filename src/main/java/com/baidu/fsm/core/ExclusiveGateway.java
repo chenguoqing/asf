@@ -25,7 +25,7 @@ public class ExclusiveGateway extends Gateway {
 
         String decidedEvent;
 
-        // If EventDecision is not set, and only one successor exists, the only one will be take as the nodeId event
+        // If EventDecision is not set, and only one successor exists, the only one will be take as the fromNodeId event
         if (getEventDecision() == null) {
             if (this.successorSize() > 1) {
                 throw new IllegalStateException("EventDecision instance must be set to ExclusiveGateway.");

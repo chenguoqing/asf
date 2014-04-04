@@ -6,7 +6,7 @@ import com.baidu.asf.model.Node;
 
 /**
  * For some auto tasks(ServiceTask,ParallelGateway,ExclusiveGateway,InclusiveGateway,
- * SubProcess) should driven the flows to nodeId nodeId automatically
+ * SubProcess) should driven the flows to fromNodeId fromNodeId automatically
  */
 public abstract class AbstractAutoExecutionProcessor extends AbstractExecutionProcessor {
     @Override

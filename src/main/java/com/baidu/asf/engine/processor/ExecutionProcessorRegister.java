@@ -11,7 +11,7 @@ import java.util.Map;
 public class ExecutionProcessorRegister {
     private static final Map<ActType, ExecutionProcessor> processors = new HashMap<ActType, ExecutionProcessor>();
 
-    // register processors for all act nodeId
+    // register processors for all act fromNodeId
     static {
         processors.put(ActType.StartEvent, new StartEventProcessor());
         processors.put(ActType.UserTask, new UserTaskProcessor());

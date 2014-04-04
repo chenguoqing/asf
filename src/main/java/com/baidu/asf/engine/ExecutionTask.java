@@ -26,12 +26,12 @@ public interface ExecutionTask {
     ASFInstance getInstance();
 
     /**
-     * Continues to nodeId nodeId
+     * Continues to fromNodeId fromNodeId
      */
     void complete();
 
     /**
-     * Continues to nodeId nodeId with variables
+     * Continues to fromNodeId fromNodeId with variables
      */
     void complete(Map<String, Object> variables);
 }

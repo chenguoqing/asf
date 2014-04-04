@@ -27,7 +27,7 @@ public class TransitionEntity extends Entity {
      */
     private ActType fromActType;
     /**
-     * Dest nodeId's type
+     * Dest fromNodeId's type
      */
     private ActType toActType;
 

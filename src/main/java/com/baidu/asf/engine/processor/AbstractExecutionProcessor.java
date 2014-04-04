@@ -48,7 +48,7 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
     }
 
     /**
-     * Leaves current nodeId with mode
+     * Leaves current fromNodeId with mode
      */
     protected void doExclusiveLeave(ProcessorContext context, Node node) {
         Map<Flow, Node> successors = node.getSuccessors();

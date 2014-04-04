@@ -7,8 +7,8 @@ import com.baidu.fsm.core.State;
  * The state graph definition interface, the valid state graph can be traversed from <tt>startState</tt> until to <tt>endState</tt>, and
  * the following constraints should be guaranteed:
  * </p>
- * Validate the state graph, the completed graph should contain a fromStart nodeId and terminate nodeId, and,from any state nodeId,
- * it can transmit to toEnd nodeId. No any state nodeId can be isolate. The following rules will guarantee the graph is valid:
+ * Validate the state graph, the completed graph should contain a fromStart fromNodeId and terminate fromNodeId, and,from any state fromNodeId,
+ * it can transmit to toEnd fromNodeId. No any state fromNodeId can be isolate. The following rules will guarantee the graph is valid:
  * <pre>
  *     <li> The start state and toEnd state muse be exists</li>
  *     <li> Start state can reach any state by graph</li>

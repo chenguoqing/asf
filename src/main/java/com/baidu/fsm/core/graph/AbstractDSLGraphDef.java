@@ -199,7 +199,7 @@ public abstract class AbstractDSLGraphDef<T> implements StateGraphDefinition {
             // Only the end state of sub state machine can be allowed to connect to parent state
             if (current.top || current.currentState != current.endState) {
                 throw new StateGraphDefinitionException("Only the sub state machine's end state has been allowed to " +
-                        "connect to one parent nodeId.");
+                        "connect to one parent fromNodeId.");
             }
 
             if (entryStack.size() < 2) {

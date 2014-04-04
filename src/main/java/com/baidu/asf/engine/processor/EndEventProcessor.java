@@ -40,7 +40,7 @@ public class EndEventProcessor extends AbstractExecutionProcessor {
 
     @Override
     public void doOutgoing(ProcessorContext context, Node node) {
-        // only the sub process nodeId can be processed
+        // only the sub process fromNodeId can be processed
         if (node.getParent() != null) {
             SubProcessProcessor processor = (SubProcessProcessor) ExecutionProcessorRegister.getProcessor(ActType.SubProcess);
             processor.endSubProcess(context);

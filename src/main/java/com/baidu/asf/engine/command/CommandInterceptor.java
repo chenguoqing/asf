@@ -14,7 +14,7 @@ public interface CommandInterceptor {
     <T> T execute(ProcessorContext context, Command<T> command);
 
     /**
-     * Set the nodeId interceptor
+     * Set the fromNodeId interceptor
      */
     void setNext(CommandInterceptor next);
 }

@@ -21,11 +21,11 @@ public interface State {
          */
         End,
         /**
-         * Wait nodeId, the state remains on this state until the manual transition
+         * Wait fromNodeId, the state remains on this state until the manual transition
          */
         Wait,
         /**
-         * ExclusiveGateway nodeId,the state will transit to nodeId state by decision
+         * ExclusiveGateway fromNodeId,the state will transit to fromNodeId state by decision
          */
         ExclusiveGateway,
         /**
@@ -45,12 +45,12 @@ public interface State {
     StateType getType();
 
     /**
-     * Whether exists the nodeId state identified by <code>stateName</code>
+     * Whether exists the fromNodeId state identified by <code>stateName</code>
      */
     boolean hasSuccessor(String stateName);
 
     /**
-     * Whether this nodeId has one successor state represented by <code>stateName</code> by event <code>event</code>
+     * Whether this fromNodeId has one successor state represented by <code>stateName</code> by event <code>event</code>
      *
      * @param event     the follow event stateMachineName
      * @param stateName the successor state stateMachineName

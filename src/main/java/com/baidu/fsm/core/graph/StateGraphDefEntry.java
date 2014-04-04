@@ -97,14 +97,14 @@ class StateGraphDefEntry {
     }
 
     /**
-     * Validate the state graph, the completed graph should contain a fromStart nodeId and terminate nodeId, and,from any state nodeId,
-     * it can transmit to toEnd nodeId. No any state nodeId can be isolate. The following rules will guarantee the graph is valid:
+     * Validate the state graph, the completed graph should contain a fromStart fromNodeId and terminate fromNodeId, and,from any state fromNodeId,
+     * it can transmit to toEnd fromNodeId. No any state fromNodeId can be isolate. The following rules will guarantee the graph is valid:
      * <p/>
      * <p><strong>For Top State Machine:</strong>
      * <li> The start state and toEnd state muse be exists</li>
      * <li> Start state can reach any state by graph</li>
      * <li> All states should has successors expect for the toEnd state</li>
-     * <li> No any paths from any nodeId to start state</li>
+     * <li> No any paths from any fromNodeId to start state</li>
      * <li> The successor state should not be itself</li>
      * </p>
      * <p/>
@@ -112,7 +112,7 @@ class StateGraphDefEntry {
      * <li> The start state and toEnd state muse be exists</li>
      * <li> Start state can reach any state by graph</li>
      * <li> All states should has successors and end state <strong>must connect to a parent state </strong></li>
-     * <li> No any paths from any nodeId to start state except the <strong>SubSMState</strong></li>
+     * <li> No any paths from any fromNodeId to start state except the <strong>SubSMState</strong></li>
      * <li> The successor state should not be itself</li>
      * </p>
      */

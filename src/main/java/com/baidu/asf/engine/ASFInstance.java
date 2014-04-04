@@ -54,15 +54,15 @@ public interface ASFInstance extends VariableContext, SystemVariableContext {
     /**
      * Retrieve the execution path of current doOutgoing,it will back the execution path until to StartEvent
      */
-    ExecutionPathNode getExecutionPath();
+    List<ExecutionPath> getExecutionPath();
 
     /**
-     * Transit the flow to nodeId nodeId,all outgoing flows will be evaluated, one of true will be selected.
+     * Transit the flow to fromNodeId fromNodeId,all outgoing flows will be evaluated, one of true will be selected.
      */
     void complete(long executionTaskId);
 
     /**
-     * Transit the flow to nodeId nodeId,all outgoing flows will be evaluated, one of true will be selected.
+     * Transit the flow to fromNodeId fromNodeId,all outgoing flows will be evaluated, one of true will be selected.
      *
      * @param variables initial variables
      */

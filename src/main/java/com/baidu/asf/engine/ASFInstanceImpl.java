@@ -4,7 +4,6 @@ import com.baidu.asf.engine.processor.ExecutionProcessor;
 import com.baidu.asf.engine.processor.ExecutionProcessorRegister;
 import com.baidu.asf.model.ASFDefinition;
 import com.baidu.asf.model.ActType;
-import com.baidu.asf.model.SequenceFlow;
 import com.baidu.asf.model.UserTask;
 import com.baidu.asf.persistence.EntityManager;
 import com.baidu.asf.persistence.EntityNotFoundException;
@@ -14,7 +13,6 @@ import com.baidu.asf.persistence.enitity.InstanceEntity;
 import com.baidu.asf.persistence.enitity.TransitionEntity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,38 +79,20 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
     }
 
     @Override
-    public ExecutionPathNode getExecutionPath() {
-        ProcessorContextImpl context = new ProcessorContextImpl();
-        context.setDefinition(definition);
-        context.setInstance(this);
-        context.setEntityManager(entityManager);
+    public List<ExecutionPath> getExecutionPath() {
 
-        List<TransitionEntity> transitionEntities = context.getEntityManager().findTransitions(getId());
+        List<TransitionEntity> transitionEntities = entityManager.findTransitions(getId());
 
+        List<ExecutionPath> executionPaths = new ArrayList<ExecutionPath>();
         if (transitionEntities == null) {
-            return null;
+            return executionPaths;
         }
-        String startEventId = transitionEntities.get(0).getFromActFullId();
-        Map<String, ExecutionPathNode> executionNodeMap = new HashMap<String, ExecutionPathNode>();
 
         for (TransitionEntity entity : transitionEntities) {
-            ExecutionPathNode from = getAndCreate(entity.getFromActFullId(), executionNodeMap);
-            ExecutionPathNode to = getAndCreate(entity.getToActFullId(), executionNodeMap);
-            from.addSuccessor(new SequenceFlow(entity.getFromActFullId(), entity.getToActFullId(),
-                    entity.isVirtualFlow(), null), to);
+            executionPaths.add(new ExecutionPath(entity.getFromActFullId(), entity.getToActFullId(), entity.isVirtualFlow()));
         }
 
-        return executionNodeMap.get(startEventId);
-    }
-
-    private ExecutionPathNode getAndCreate(String actFullId, Map<String, ExecutionPathNode> executionNodeMap) {
-        ExecutionPathNode node = executionNodeMap.get(actFullId);
-
-        if (node == null) {
-            node = new ExecutionPathNode(actFullId);
-            executionNodeMap.put(actFullId, node);
-        }
-        return node;
+        return executionPaths;
     }
 
     @Override

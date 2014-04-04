@@ -10,7 +10,7 @@ public interface SubProcessProcessor extends ExecutionProcessor {
     /**
      * Start sub process,the execution will downgrade to sub process
      *
-     * @param subProcess current sub process nodeId
+     * @param subProcess current sub process fromNodeId
      * @param subContext the {@link com.baidu.asf.engine.ProcessorContext} for sub process
      */
     void startSubProcess(SubProcess subProcess, ProcessorContext subContext);

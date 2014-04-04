@@ -82,6 +82,13 @@ public class SequenceFlow implements Flow {
     }
 
     @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(").append(sourceRef).append("---->").append(targetRef).append(")");
+        return sb.toString();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof SequenceFlow)) {
             return false;

@@ -2,7 +2,7 @@ package com.baidu.fsm.core;
 
 /**
  * {@link com.baidu.fsm.core.Gateway} is a auto state, when flows arriving at gateway,
- * it will decide the nodeId event by {@link com.baidu.fsm.core.EventDecision}.
+ * it will decide the fromNodeId event by {@link com.baidu.fsm.core.EventDecision}.
  */
 public abstract class Gateway extends AbstractState {
     /**

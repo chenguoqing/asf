@@ -6,7 +6,7 @@ package com.baidu.fsm.core;
 public interface EventDecision {
 
     /**
-     * Return the transition event for nodeId event
+     * Return the transition event for fromNodeId event
      *
      * @param stateMachine the state machine instance associated with current state(associated with {@link com.baidu.fsm.core.EventDecision}
      * @param eventSources the event source

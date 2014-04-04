@@ -1,7 +1,7 @@
 package com.baidu.fsm.core;
 
 /**
- * Wait state nodeId
+ * Wait state fromNodeId
  */
 public class WaitState extends AbstractState {
     public WaitState(String name) {

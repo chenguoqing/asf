@@ -51,7 +51,7 @@ public class DefaultSubProcessProcessor extends AbstractExecutionProcessor imple
         SubProcess subProcess = (SubProcess) startEvent.getParent();
 
         if (subProcess == null) {
-            throw new ASFException("Invalidate nodeId path:" + startEvent.getFullId());
+            throw new ASFException("Invalidate fromNodeId path:" + startEvent.getFullId());
         }
 
         // adds a virtual flow from EndEvent of sub process to SubProcess for execution tracing,
