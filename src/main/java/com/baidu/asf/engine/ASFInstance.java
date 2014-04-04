@@ -69,13 +69,13 @@ public interface ASFInstance extends VariableContext, SystemVariableContext {
     void complete(long executionTaskId, Map<String, Object> variables);
 
     /**
-     * Pause the doOutgoing instance, it will throw {@link com.baidu.asf.engine.ASFStatusException} if the instance has
+     * Pause the doOutgoing instance, it will throw {@link com.baidu.asf.ASFException} if the instance has
      * ended
      */
     void pause();
 
     /**
-     * Resume the instance execution, it will throw {@link com.baidu.asf.engine.ASFStatusException} of the instance
+     * Resume the instance execution, it will throw {@link com.baidu.asf.ASFException} of the instance
      * is not on pause status
      */
     void resume();

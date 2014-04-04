@@ -26,7 +26,6 @@ public class EngineTest {
     @Test
     public void testStartASFInstance() {
         engineProxy.startASFInstance();
-        System.out.println("88888888888888");
     }
 
     @Test

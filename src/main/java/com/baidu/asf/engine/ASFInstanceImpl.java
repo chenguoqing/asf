@@ -1,5 +1,6 @@
 package com.baidu.asf.engine;
 
+import com.baidu.asf.ASFException;
 import com.baidu.asf.engine.processor.ExecutionProcessor;
 import com.baidu.asf.engine.processor.ExecutionProcessorRegister;
 import com.baidu.asf.model.ASFDefinition;
@@ -101,7 +102,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
     @Override
     public void complete(long executionTaskId, Map<String, Object> variables) {
         if (instanceEntity.getStatus() != ASFStatus.ACTIVE.value) {
-            throw new ASFStatusException("Can't flow a non-active doOutgoing.");
+            throw new ASFException("Can't flow a non-active doOutgoing.");
         }
         // save variables
         setVariables(variables);
@@ -123,7 +124,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
     @Override
     public void pause() {
         if (instanceEntity.getStatus() != ASFStatus.ACTIVE.value) {
-            throw new ASFStatusException("Can't pause a non-active doOutgoing.");
+            throw new ASFException("Can't pause a non-active doOutgoing.");
         }
 
         setStatus(ASFStatus.SUSPEND);
@@ -132,7 +133,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
     @Override
     public void resume() {
         if (instanceEntity.getStatus() != ASFStatus.ACTIVE.value) {
-            throw new ASFStatusException("Can't resume a non-suspend doOutgoing.");
+            throw new ASFException("Can't resume a non-suspend doOutgoing.");
         }
         setStatus(ASFStatus.ACTIVE);
     }
