@@ -1,7 +1,7 @@
 package com.baidu.asf.persistence;
 
-import com.baidu.asf.cache.Cache;
-import com.baidu.asf.cache.CacheManager;
+import com.baidu.asf.util.Cache;
+import com.baidu.asf.util.LocalResourceStack;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -25,7 +25,7 @@ public class CachedEntityManagerHandler implements InvocationHandler {
         CacheKey key = new CacheKey(method, args);
         Object v;
         if (cache != null && method.getReturnType() != Void.class) {
-            v = CacheManager.getCache(key);
+            v = LocalResourceStack.getCacheManager().getCache(key);
 
             if (v != null) {
                 return v;
@@ -33,7 +33,7 @@ public class CachedEntityManagerHandler implements InvocationHandler {
         }
 
         v = method.invoke(target, args);
-        CacheManager.addCache(key, v);
+        LocalResourceStack.getCacheManager().addCache(key, v);
 
         return v;
     }

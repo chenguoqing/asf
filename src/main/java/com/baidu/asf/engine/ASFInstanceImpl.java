@@ -1,18 +1,20 @@
 package com.baidu.asf.engine;
 
-import com.baidu.asf.engine.command.Command;
-import com.baidu.asf.engine.command.CommandExecutor;
-import com.baidu.asf.engine.command.CompleteCommand;
-import com.baidu.asf.engine.command.GetExecutionPathCommand;
+import com.baidu.asf.engine.processor.ExecutionProcessor;
+import com.baidu.asf.engine.processor.ExecutionProcessorRegister;
 import com.baidu.asf.model.ASFDefinition;
+import com.baidu.asf.model.ActType;
+import com.baidu.asf.model.SequenceFlow;
 import com.baidu.asf.model.UserTask;
 import com.baidu.asf.persistence.EntityManager;
 import com.baidu.asf.persistence.EntityNotFoundException;
 import com.baidu.asf.persistence.MVCCException;
 import com.baidu.asf.persistence.enitity.ExecutionEntity;
 import com.baidu.asf.persistence.enitity.InstanceEntity;
+import com.baidu.asf.persistence.enitity.TransitionEntity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,13 +40,10 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
      */
     private final InstanceEntity instanceEntity;
 
-    private final CommandExecutor executor;
-
-    public ASFInstanceImpl(long id, ASFDefinition definition, EntityManager entityManager, CommandExecutor executor) {
+    public ASFInstanceImpl(long id, ASFDefinition definition, EntityManager entityManager) {
         this.id = id;
         this.definition = definition;
         this.entityManager = entityManager;
-        this.executor = executor;
         this.instanceEntity = entityManager.loadASFInstance(id);
     }
 
@@ -62,7 +61,6 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
     public ASFStatus getStatus() {
         return ASFStatus.get(instanceEntity.getStatus());
     }
-
 
     @Override
     public List<ExecutionTask> getTasks() {
@@ -88,7 +86,33 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         context.setDefinition(definition);
         context.setInstance(this);
         context.setEntityManager(entityManager);
-        return executor.execute(context, new GetExecutionPathCommand());
+
+        List<TransitionEntity> transitionEntities = context.getEntityManager().findTransitions(getId());
+
+        if (transitionEntities == null) {
+            return null;
+        }
+        String startEventId = transitionEntities.get(0).getFromActFullId();
+        Map<String, ExecutionPathNode> executionNodeMap = new HashMap<String, ExecutionPathNode>();
+
+        for (TransitionEntity entity : transitionEntities) {
+            ExecutionPathNode from = getAndCreate(entity.getFromActFullId(), executionNodeMap);
+            ExecutionPathNode to = getAndCreate(entity.getToActFullId(), executionNodeMap);
+            from.addSuccessor(new SequenceFlow(entity.getFromActFullId(), entity.getToActFullId(),
+                    entity.isVirtualFlow(), null), to);
+        }
+
+        return executionNodeMap.get(startEventId);
+    }
+
+    private ExecutionPathNode getAndCreate(String actFullId, Map<String, ExecutionPathNode> executionNodeMap) {
+        ExecutionPathNode node = executionNodeMap.get(actFullId);
+
+        if (node == null) {
+            node = new ExecutionPathNode(actFullId);
+            executionNodeMap.put(actFullId, node);
+        }
+        return node;
     }
 
     @Override
@@ -120,7 +144,8 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         context.setEntityManager(entityManager);
         context.setExecutionTaskId(executionTaskId);
 
-        executor.execute(context, new CompleteCommand(userTask));
+        ExecutionProcessor processor = ExecutionProcessorRegister.getProcessor(ActType.UserTask);
+        processor.doOutgoing(context, userTask);
     }
 
     @Override
@@ -150,13 +175,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         context.setInstance(this);
         context.setEntityManager(entityManager);
         try {
-            executor.execute(context, new Command<Void>() {
-                @Override
-                public Void execute(ProcessorContext context) {
-                    entityManager.updateASFInstanceStatus(instanceEntity);
-                    return null;
-                }
-            });
+            entityManager.updateASFInstanceStatus(instanceEntity);
         } catch (MVCCException e) {
             throw new ASFConcurrentModificationException(this, "Failed to update status to " + instanceEntity.getStatus());
         }
@@ -165,11 +184,6 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
     @Override
     protected EntityManager getEntityManager() {
         return entityManager;
-    }
-
-    @Override
-    protected CommandExecutor getExecutor() {
-        return executor;
     }
 
     @Override

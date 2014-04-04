@@ -1,8 +1,6 @@
 package com.baidu.asf.engine;
 
 import com.baidu.asf.ASFException;
-import com.baidu.asf.engine.command.Command;
-import com.baidu.asf.engine.command.CommandExecutor;
 import com.baidu.asf.engine.processor.ExecutionProcessor;
 import com.baidu.asf.engine.processor.ExecutionProcessorRegister;
 import com.baidu.asf.model.ASFDefinition;
@@ -17,14 +15,9 @@ import java.util.Map;
  */
 public class ASFEngineImpl implements ASFEngine {
     private EntityManager entityManager;
-    private CommandExecutor executor;
 
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
-    }
-
-    public void setExecutor(CommandExecutor executor) {
-        this.executor = executor;
     }
 
     @Override
@@ -38,30 +31,26 @@ public class ASFEngineImpl implements ASFEngine {
 
         definition.build();
 
+        InstanceEntity entity = new InstanceEntity();
+        entity.setDefId(definition.getId());
+        entity.setDefVersion(definition.getVersion());
+        entity.setStatus(ASFInstance.ASFStatus.ACTIVE.value);
+        // create instance
+        entityManager.createASFInstance(entity);
+
+        ASFInstance instance = new ASFInstanceImpl(entity.getId(), definition, entityManager);
+        instance.setVariables(variables);
+
         final ProcessorContextImpl context = new ProcessorContextImpl();
         context.setEntityManager(entityManager);
         context.setDefinition(definition);
-        return executor.execute(context, new Command<ASFInstance>() {
-            @Override
-            public ASFInstance execute(ProcessorContext context) {
-                InstanceEntity entity = new InstanceEntity();
-                entity.setDefId(definition.getId());
-                entity.setDefVersion(definition.getVersion());
-                entity.setStatus(ASFInstance.ASFStatus.ACTIVE.value);
-                // create instance
-                entityManager.createASFInstance(entity);
+        context.setInstance(instance);
 
-                ASFInstance instance = new ASFInstanceImpl(entity.getId(), definition, entityManager, executor);
-                instance.setVariables(variables);
+        // start process
+        ExecutionProcessor processor = ExecutionProcessorRegister.getProcessor(ActType.StartEvent);
+        processor.doOutgoing(context, definition.getStartEvent());
 
-                ((ProcessorContextImpl) context).setInstance(instance);
-                // start process
-                ExecutionProcessor processor = ExecutionProcessorRegister.getProcessor(ActType.StartEvent);
-                processor.doOutgoing(context, definition.getStartEvent());
-
-                return instance;
-            }
-        });
+        return instance;
     }
 
     @Override
@@ -72,17 +61,12 @@ public class ASFEngineImpl implements ASFEngine {
         ProcessorContextImpl context = new ProcessorContextImpl();
         context.setEntityManager(entityManager);
 
-        return executor.execute(context, new Command<ASFInstance>() {
-            @Override
-            public ASFInstance execute(ProcessorContext context) {
-                InstanceEntity entity = entityManager.loadASFInstance(id);
+        InstanceEntity entity = entityManager.loadASFInstance(id);
 
-                if (definition.getVersion() != entity.getDefVersion()) {
-                    throw new ASFException("Incompatible definition version.");
-                }
-                ASFInstance instance = new ASFInstanceImpl(entity.getId(), definition, entityManager, executor);
-                return instance;
-            }
-        });
+        if (definition.getVersion() != entity.getDefVersion()) {
+            throw new ASFException("Incompatible definition version.");
+        }
+
+        return new ASFInstanceImpl(entity.getId(), definition, entityManager);
     }
 }

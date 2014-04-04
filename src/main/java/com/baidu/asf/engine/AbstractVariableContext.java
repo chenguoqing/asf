@@ -1,13 +1,10 @@
 package com.baidu.asf.engine;
 
-import com.baidu.asf.engine.command.Command;
-import com.baidu.asf.engine.command.CommandExecutor;
 import com.baidu.asf.persistence.DuplicateKeyException;
 import com.baidu.asf.persistence.EntityManager;
 import com.baidu.asf.persistence.MVCCException;
 import com.baidu.asf.persistence.enitity.VariableEntity;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -34,21 +31,14 @@ public abstract class AbstractVariableContext implements VariableContext, System
 
     @Override
     public Object getVariable(String name) {
-        return getVariable(name, VariableEntity.VariableClass.USER, null);
+        return getVariable(name, VariableEntity.VariableClass.USER);
     }
 
     @Override
     public void removeVariable(final String name) {
         final EntityManager entityManager = getEntityManager();
         final long id = getInstance().getId();
-
-        executeCommand(new Command<Object>() {
-            @Override
-            public Object execute(ProcessorContext context) {
-                entityManager.removeVariable(id, name, VariableEntity.VariableClass.USER);
-                return null;
-            }
-        });
+        entityManager.removeVariable(id, name, VariableEntity.VariableClass.USER);
     }
 
     @Override
@@ -60,13 +50,7 @@ public abstract class AbstractVariableContext implements VariableContext, System
         final EntityManager entityManager = getEntityManager();
         final long id = getInstance().getId();
 
-        executeCommand(new Command<Object>() {
-            @Override
-            public Object execute(ProcessorContext context) {
-                entityManager.clearVariables(id, variableClass);
-                return null;
-            }
-        });
+        entityManager.clearVariables(id, variableClass);
     }
 
     @Override
@@ -78,54 +62,34 @@ public abstract class AbstractVariableContext implements VariableContext, System
         final EntityManager entityManager = getEntityManager();
         final long id = getInstance().getId();
 
-        return executeCommand(new Command<VariableEntity>() {
-            @Override
-            public VariableEntity execute(ProcessorContext context) {
-                VariableEntity variable = new VariableEntity(id, name, value, variableClass);
-                entityManager.createVariable(variable);
-                return variable;
-            }
-        });
+        VariableEntity variable = new VariableEntity(id, name, value, variableClass);
+        entityManager.createVariable(variable);
+        return variable;
     }
 
     private void setVariable(final String name, final Object value, final VariableEntity.VariableClass variableClass) {
         final EntityManager entityManager = getEntityManager();
 
-        executeCommand(new Command<Object>() {
-            @Override
-            public Object execute(ProcessorContext context) {
-                VariableEntity entity = context.getEntityManager().findVariable(context.getInstance().getId(), name,
-                        variableClass);
+        VariableEntity entity = getEntityManager().findVariable(getInstance().getId(), name,
+                variableClass);
 
-                if (entity == null) {
-                    createVariable(name, value, variableClass);
-                } else {
-                    entity.setVariable(name, value);
-                    entityManager.updateVariable(entity);
-                }
-                return null;
-            }
-        });
+        if (entity == null) {
+            createVariable(name, value, variableClass);
+        } else {
+            entity.setVariable(name, value);
+            entityManager.updateVariable(entity);
+        }
     }
 
     @Override
     public Object getSystemVariable(String name) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put(ProcessorContext.ParamKeys.DisabledCache.paramName, true);
-        return getVariable(name, VariableEntity.VariableClass.SYSTEM, params);
+        return getVariable(name, VariableEntity.VariableClass.SYSTEM);
     }
 
-    private Object getVariable(final String name, final VariableEntity.VariableClass variableClass, Map<String,
-            Object> params) {
+    private Object getVariable(final String name, final VariableEntity.VariableClass variableClass) {
         final EntityManager entityManager = getEntityManager();
-        final long id = getInstance().getId();
-        return executeCommand(new Command<Object>() {
-            @Override
-            public Object execute(ProcessorContext context) {
-                VariableEntity entity = entityManager.findVariable(id, name, variableClass);
-                return entity == null ? null : entity.getValue();
-            }
-        }, params);
+        VariableEntity entity = entityManager.findVariable(getInstance().getId(), name, variableClass);
+        return entity == null ? null : entity.getValue();
     }
 
     @Override
@@ -142,14 +106,7 @@ public abstract class AbstractVariableContext implements VariableContext, System
 
     @Override
     public int incrementAndGet(final String name) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put(ProcessorContext.ParamKeys.DisabledCache.paramName, true);
-        return executeCommand(new Command<Integer>() {
-            @Override
-            public Integer execute(ProcessorContext context) {
-                return doIncrementAndGet(name);
-            }
-        }, params);
+        return doIncrementAndGet(name);
     }
 
     private int doIncrementAndGet(String name) {
@@ -180,27 +137,7 @@ public abstract class AbstractVariableContext implements VariableContext, System
         }
     }
 
-    private <T> T executeCommand(Command<T> command) {
-        return executeCommand(command, null);
-    }
-
-    private <T> T executeCommand(Command<T> command, Map<String, Object> params) {
-        return getExecutor().execute(createExecutionContext(params), command);
-    }
-
-    private ProcessorContext createExecutionContext(Map<String, Object> params) {
-        ProcessorContextImpl context = new ProcessorContextImpl();
-        context.setInstance(getInstance());
-        context.setEntityManager(getEntityManager());
-        if (params != null) {
-            context.addParams(params);
-        }
-        return context;
-    }
-
     protected abstract ASFInstance getInstance();
 
     protected abstract EntityManager getEntityManager();
-
-    protected abstract CommandExecutor getExecutor();
 }
