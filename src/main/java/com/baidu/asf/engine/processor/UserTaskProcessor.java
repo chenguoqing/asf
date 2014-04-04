@@ -1,11 +1,9 @@
 package com.baidu.asf.engine.processor;
 
-import com.baidu.asf.engine.ASFConcurrentModificationException;
 import com.baidu.asf.engine.ProcessorContext;
 import com.baidu.asf.model.ActType;
 import com.baidu.asf.model.Flow;
 import com.baidu.asf.model.Node;
-import com.baidu.asf.persistence.MVCCException;
 import com.baidu.asf.persistence.enitity.ExecutionEntity;
 
 /**
@@ -28,11 +26,7 @@ public class UserTaskProcessor extends AbstractExecutionProcessor {
     @Override
     public void doOutgoing(ProcessorContext context, Node node) {
         // remove user task
-        try {
-            context.getEntityManager().removeExecution(context.getExecutionTaskId());
-        } catch (MVCCException e) {
-            throw new ASFConcurrentModificationException(context.getInstance());
-        }
+        context.getEntityManager().removeExecution(context.getExecutionTaskId());
 
         // doExclusiveLeave UserTask
         doExclusiveLeave(context, node);

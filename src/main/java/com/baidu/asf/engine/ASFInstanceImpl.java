@@ -6,8 +6,6 @@ import com.baidu.asf.model.ASFDefinition;
 import com.baidu.asf.model.ActType;
 import com.baidu.asf.model.UserTask;
 import com.baidu.asf.persistence.EntityManager;
-import com.baidu.asf.persistence.EntityNotFoundException;
-import com.baidu.asf.persistence.MVCCException;
 import com.baidu.asf.persistence.enitity.ExecutionEntity;
 import com.baidu.asf.persistence.enitity.InstanceEntity;
 import com.baidu.asf.persistence.enitity.TransitionEntity;
@@ -108,13 +106,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         // save variables
         setVariables(variables);
 
-        ExecutionEntity executionEntity;
-
-        try {
-            executionEntity = entityManager.loadExecution(executionTaskId);
-        } catch (EntityNotFoundException e) {
-            throw new ASFConcurrentModificationException(this, "Not found the user task id:" + e.id);
-        }
+        ExecutionEntity executionEntity = entityManager.loadExecution(executionTaskId);
 
         UserTask userTask = definition.findNode(executionEntity.getNodeFullId());
 
@@ -154,11 +146,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         context.setDefinition(definition);
         context.setInstance(this);
         context.setEntityManager(entityManager);
-        try {
-            entityManager.updateASFInstanceStatus(instanceEntity);
-        } catch (MVCCException e) {
-            throw new ASFConcurrentModificationException(this, "Failed to update status to " + instanceEntity.getStatus());
-        }
+        entityManager.updateASFInstanceStatus(instanceEntity);
     }
 
     @Override
