@@ -38,17 +38,10 @@ public class XMLDefinition extends AbstractASFDefinition {
      * Constructor with validate
      */
     public XMLDefinition(String resourcePath, InputStream definitionResource) {
-        this(resourcePath, definitionResource, true);
-    }
-
-    /**
-     * Constructor with validate parameter
-     */
-    private XMLDefinition(String resourcePath, InputStream definitionResource, boolean validate) {
         if (definitionResource == null) {
             throw new IllegalArgumentException();
         }
-        build(resourcePath, definitionResource, validate);
+        build(resourcePath, definitionResource);
     }
 
     /**
@@ -58,10 +51,10 @@ public class XMLDefinition extends AbstractASFDefinition {
         setParent(parent);
     }
 
-    private void build(String resourcePath, InputStream definitionResource, boolean validate) {
+    private void build(String resourcePath, InputStream definitionResource) {
         try {
             // parse xml stream to model
-            parseModel(definitionResource, validate);
+            parseModel(definitionResource);
             // build and validate model
             buildDefinition();
         } catch (IOException e) {
@@ -80,7 +73,7 @@ public class XMLDefinition extends AbstractASFDefinition {
     /**
      * Parse the xml stream to XMLDefinition instance
      */
-    public void parseModel(InputStream inputStream, boolean validate) throws IOException, SAXException {
+    public void parseModel(InputStream inputStream) throws IOException, SAXException {
         Digester digester = new Digester();
 
         digester.push(this);
@@ -96,10 +89,8 @@ public class XMLDefinition extends AbstractASFDefinition {
         addNodeRule(digester, ELEMENT_SUBPROCESS, DefaultSubProcess.class);
         addNodeRule(digester, ELEMENT_END_EVENT, EndEvent.class);
 
-        if (validate) {
-            SchemaFactory schemaFactory = SchemaFactory.newInstance(schemaLanguage);
-            digester.setXMLSchema(schemaFactory.newSchema(XMLDefinition.class.getResource(SCHEMA_PATH)));
-        }
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(schemaLanguage);
+        digester.setXMLSchema(schemaFactory.newSchema(XMLDefinition.class.getResource(SCHEMA_PATH)));
         digester.parse(inputStream);
     }
 
