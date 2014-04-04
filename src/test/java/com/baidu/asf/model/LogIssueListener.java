@@ -1,4 +1,4 @@
-package com.baidu.model;
+package com.baidu.asf.model;
 
 import com.baidu.asf.engine.ExecutionEvent;
 import com.baidu.asf.engine.ExecutionListener;

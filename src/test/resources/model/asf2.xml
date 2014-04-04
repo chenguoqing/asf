@@ -72,12 +72,12 @@
     </sequenceFlow>
 
     <serviceTask id="deploy" description="上线">
-        <listener class="com.baidu.model.CommonLogListener"/>
+        <listener class="com.baidu.asf.model.CommonLogListener"/>
     </serviceTask>
 
     <sequenceFlow sourceRef="deploy" targetRef="theEnd"/>
 
     <endEvent id="theEnd">
-        <listener class="com.baidu.model.CommonLogListener"/>
+        <listener class="com.baidu.asf.model.CommonLogListener"/>
     </endEvent>
 </process>

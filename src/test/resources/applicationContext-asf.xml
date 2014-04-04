@@ -5,12 +5,8 @@
 
     <import resource="applicationContext-common.xml"/>
 
-    <bean id="testDefinition" class="com.baidu.asf.model.xml.XMLDefinition">
-        <constructor-arg value="/model/asf1.xml"/>
-    </bean>
-
     <bean class="com.baidu.asf.engine.spring.ASFEngineFactoryBean">
-        <property name="definition" ref="testDefinition"/>
+        <property name="definitionResource" value="/model/asf1.xml"/>
         <property name="engineConfiguration" ref="engineConfig"/>
     </bean>
 </beans>

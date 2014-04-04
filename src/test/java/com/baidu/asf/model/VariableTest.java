@@ -1,4 +1,4 @@
-package com.baidu.model;
+package com.baidu.asf.model;
 
 import com.baidu.asf.engine.ASFInstance;
 import com.baidu.asf.engine.spring.ASFEngineProxy;

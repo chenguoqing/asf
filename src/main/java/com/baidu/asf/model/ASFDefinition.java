@@ -3,7 +3,7 @@ package com.baidu.asf.model;
 import java.util.Map;
 
 /**
- * Adverse state flow doOutgoing definition
+ * Adverse state flow  definition
  */
 public interface ASFDefinition {
     /**
@@ -55,9 +55,4 @@ public interface ASFDefinition {
      * Retrieve all sub definitions
      */
     Map<String, ASFDefinition> getSubDefinitions();
-
-    /**
-     * Build definition
-     */
-    void build();
 }

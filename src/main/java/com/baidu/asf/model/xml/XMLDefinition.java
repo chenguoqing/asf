@@ -10,7 +10,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.validation.SchemaFactory;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -21,8 +20,6 @@ public class XMLDefinition extends AbstractASFDefinition {
 
     private static final String schemaLanguage = "http://www.w3.org/2001/XMLSchema";
     private static final String SCHEMA_PATH = "/schema/asf.xsd";
-    private static final String PREFIX_CLASSPATH = "classpath:";
-    private static final String PREFIX_FILE = "file:";
 
     private static final String ELEMENT_PROCESS = "process";
     private static final String ELEMENT_START_EVENT = "startEvent";
@@ -37,65 +34,53 @@ public class XMLDefinition extends AbstractASFDefinition {
     private static final String ELEMENT_SUBPROCESS = "subProcess";
     private static final String ELEMENT_LISTENER = "listener";
 
-    private final String resourcePath;
-    private final boolean validate;
-
     /**
      * Constructor with validate
      */
-    public XMLDefinition(String resourcePath) {
-        this(resourcePath, true);
+    public XMLDefinition(String resourcePath, InputStream definitionResource) {
+        this(resourcePath, definitionResource, true);
     }
 
     /**
      * Constructor with validate parameter
      */
-    private XMLDefinition(String resourcePath, boolean validate) {
-        if (resourcePath == null) {
+    private XMLDefinition(String resourcePath, InputStream definitionResource, boolean validate) {
+        if (definitionResource == null) {
             throw new IllegalArgumentException();
         }
-        this.resourcePath = resourcePath;
-        this.validate = validate;
+        build(resourcePath, definitionResource, validate);
     }
 
     /**
      * Constructor, only for sub definition
      */
     private XMLDefinition(XMLDefinition parent) {
-        this(parent.resourcePath);
         setParent(parent);
     }
 
-    @Override
-    public void build() {
-
-        InputStream inputStream;
+    private void build(String resourcePath, InputStream definitionResource, boolean validate) {
         try {
-            if (resourcePath.startsWith(PREFIX_CLASSPATH)) {
-                inputStream = loadResource(resourcePath.substring(0, PREFIX_CLASSPATH.length()));
-            } else if (resourcePath.startsWith(PREFIX_FILE)) {
-                inputStream = new FileInputStream(resourcePath.substring(0, PREFIX_FILE.length()));
-            } else {
-                inputStream = loadResource(resourcePath);
-            }
+            // parse xml stream to model
+            parseModel(definitionResource, validate);
+            // build and validate model
+            buildDefinition();
         } catch (IOException e) {
-            throw new ASFModelException(e);
+            throw new ASFException("Failed to load xml resource:" + resourcePath, e);
+        } catch (SAXException e) {
+            throw new ASFModelException("Failed to parse xml resource:" + resourcePath, e);
+        } finally {
+            try {
+                definitionResource.close();
+            } catch (IOException e) {
+                throw new ASFException("Failed to close file:" + resourcePath);
+            }
         }
-        if (inputStream == null) {
-            throw new ASFModelException("Not found the xml resource for path:" + resourcePath);
-        }
-
-        // parse xml stream to model
-        parseModel(inputStream);
-
-        // build and validate model
-        buildDefinition();
     }
 
     /**
      * Parse the xml stream to XMLDefinition instance
      */
-    public void parseModel(InputStream inputStream) {
+    public void parseModel(InputStream inputStream, boolean validate) throws IOException, SAXException {
         Digester digester = new Digester();
 
         digester.push(this);
@@ -111,17 +96,11 @@ public class XMLDefinition extends AbstractASFDefinition {
         addNodeRule(digester, ELEMENT_SUBPROCESS, DefaultSubProcess.class);
         addNodeRule(digester, ELEMENT_END_EVENT, EndEvent.class);
 
-        try {
-            if (validate) {
-                SchemaFactory schemaFactory = SchemaFactory.newInstance(schemaLanguage);
-                digester.setXMLSchema(schemaFactory.newSchema(XMLDefinition.class.getResource(SCHEMA_PATH)));
-            }
-            digester.parse(inputStream);
-        } catch (IOException e) {
-            throw new ASFException("Failed to load xml resource:" + resourcePath);
-        } catch (SAXException e) {
-            throw new ASFModelException("Failed to parse xml resource:" + resourcePath);
+        if (validate) {
+            SchemaFactory schemaFactory = SchemaFactory.newInstance(schemaLanguage);
+            digester.setXMLSchema(schemaFactory.newSchema(XMLDefinition.class.getResource(SCHEMA_PATH)));
         }
+        digester.parse(inputStream);
     }
 
     /**
@@ -187,17 +166,5 @@ public class XMLDefinition extends AbstractASFDefinition {
         public void end(String namespace, String name) throws Exception {
             getDigester().pop();
         }
-    }
-
-    /**
-     * Load resource from classpath
-     */
-    private InputStream loadResource(String path) {
-        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
-        if (inputStream == null) {
-            inputStream = XMLDefinition.class.getResourceAsStream(path);
-        }
-
-        return inputStream;
     }
 }

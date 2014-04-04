@@ -4,23 +4,27 @@ import com.baidu.asf.engine.ASFEngine;
 import com.baidu.asf.engine.ASFEngineConfiguration;
 import com.baidu.asf.engine.ASFInstance;
 import com.baidu.asf.model.ASFDefinition;
+import com.baidu.asf.model.xml.XMLDefinition;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
+import org.springframework.core.io.Resource;
 
 import java.util.Map;
 
 /**
  * Helper class for spring context
  */
-public class ASFEngineFactoryBean extends AbstractFactoryBean<ASFEngineFactoryBean.SpringASFEngineProxy> {
-    private ASFDefinition definition;
+public class ASFEngineFactoryBean extends AbstractFactoryBean<ASFEngineFactoryBean.SpringASFEngineProxy> implements
+        InitializingBean {
     private ASFEngineConfiguration engineConfiguration;
-
-    public void setDefinition(ASFDefinition definition) {
-        this.definition = definition;
-    }
+    private Resource definitionResource;
 
     public void setEngineConfiguration(ASFEngineConfiguration engineConfiguration) {
         this.engineConfiguration = engineConfiguration;
+    }
+
+    public void setDefinitionResource(Resource definitionResource) {
+        this.definitionResource = definitionResource;
     }
 
     @Override
@@ -30,8 +34,11 @@ public class ASFEngineFactoryBean extends AbstractFactoryBean<ASFEngineFactoryBe
 
     @Override
     protected SpringASFEngineProxy createInstance() throws Exception {
+        XMLDefinition definition = new XMLDefinition(definitionResource.getURL().getFile(),
+                definitionResource.getInputStream());
         return new SpringASFEngineProxy(definition, engineConfiguration.buildEngine());
     }
+
 
     static class SpringASFEngineProxy implements ASFEngineProxy {
         final ASFDefinition definition;

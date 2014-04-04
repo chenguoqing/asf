@@ -29,8 +29,6 @@ public class ASFEngineImpl implements ASFEngine {
     public ASFInstance startASFInstance(final ASFDefinition definition, final Map<String,
             Object> variables) {
 
-        definition.build();
-
         InstanceEntity entity = new InstanceEntity();
         entity.setDefId(definition.getId());
         entity.setDefVersion(definition.getVersion());
@@ -55,8 +53,6 @@ public class ASFEngineImpl implements ASFEngine {
 
     @Override
     public ASFInstance findASFInstance(final ASFDefinition definition, final long id) {
-
-        definition.build();
 
         ProcessorContextImpl context = new ProcessorContextImpl();
         context.setEntityManager(entityManager);

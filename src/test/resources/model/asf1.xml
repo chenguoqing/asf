@@ -6,20 +6,20 @@
     <sequenceFlow sourceRef="theStart" targetRef="LogIssue"/>
 
     <serviceTask id="LogIssue">
-        <listener class="com.baidu.model.LogIssueListener"/>
+        <listener class="com.baidu.asf.model.LogIssueListener"/>
     </serviceTask>
 
     <sequenceFlow sourceRef="LogIssue" targetRef="forkGateway"/>
 
     <parallelGateway id="forkGateway">
-        <listener class="com.baidu.model.CommonLogListener"/>
+        <listener class="com.baidu.asf.model.CommonLogListener"/>
     </parallelGateway>
 
     <sequenceFlow sourceRef="forkGateway" targetRef="testLog"/>
     <sequenceFlow sourceRef="forkGateway" targetRef="developerSubProcess"/>
 
     <serviceTask id="testLog">
-        <listener class="com.baidu.model.CommonLogListener"/>
+        <listener class="com.baidu.asf.model.CommonLogListener"/>
     </serviceTask>
 
     <subProcess id="developerSubProcess">
@@ -27,19 +27,19 @@
         <sequenceFlow sourceRef="theSubStart" targetRef="DeveloperTask"/>
 
         <userTask id="DeveloperTask" name="Complete JIRA issue">
-            <listener class="com.baidu.model.DeveloperTaskListener"/>
+            <listener class="com.baidu.asf.model.DeveloperTaskListener"/>
         </userTask>
 
         <sequenceFlow sourceRef="DeveloperTask" targetRef="TestTask"/>
 
         <userTask id="TestTask" name="Test solution">
-            <listener class="com.baidu.model.TestTaskListener"/>
+            <listener class="com.baidu.asf.model.TestTaskListener"/>
         </userTask>
 
         <sequenceFlow sourceRef="TestTask" targetRef="TestOK"/>
 
         <exclusiveGateway id="TestOK">
-            <listener class="com.baidu.model.CommonLogListener"/>
+            <listener class="com.baidu.asf.model.CommonLogListener"/>
         </exclusiveGateway>
 
         <sequenceFlow sourceRef="TestOK" targetRef="DeveloperReady">
@@ -51,7 +51,7 @@
         </sequenceFlow>
 
         <serviceTask id="DeveloperReady">
-            <listener class="com.baidu.model.CommonLogListener"/>
+            <listener class="com.baidu.asf.model.CommonLogListener"/>
         </serviceTask>
 
         <sequenceFlow sourceRef="DeveloperReady" targetRef="theEndDeveloperSubProcess"/>
@@ -62,12 +62,12 @@
     <sequenceFlow sourceRef="developerSubProcess" targetRef="joinGateway"/>
 
     <parallelGateway id="joinGateway">
-        <listener class="com.baidu.model.CommonLogListener"/>
+        <listener class="com.baidu.asf.model.CommonLogListener"/>
     </parallelGateway>
 
     <sequenceFlow sourceRef="joinGateway" targetRef="theEnd"/>
 
     <endEvent id="theEnd">
-        <listener class="com.baidu.model.CommonLogListener"/>
+        <listener class="com.baidu.asf.model.CommonLogListener"/>
     </endEvent>
 </process>
