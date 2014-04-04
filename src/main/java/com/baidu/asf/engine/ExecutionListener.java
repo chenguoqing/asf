@@ -1,7 +1,7 @@
 package com.baidu.asf.engine;
 
 /**
- * When doOutgoing flows to one fromNodeId, user can config some listeners for some logic,{@link ExecutionListener} is the
+ * When doOutgoing flows to one sourceRef, user can config some listeners for some logic,{@link ExecutionListener} is the
  * interface.
  */
 public interface ExecutionListener {

@@ -7,7 +7,7 @@ public interface ObjectLazyLoader<T> {
     /**
      * Construct the object instance
      *
-     * @throws {@link com.baidu.asf.util.ObjectConstructException} if the object fails to construct
+     * @throws {@link com.baidu.asf.ASFException} if the object fails to construct
      */
     T getObject();
 }

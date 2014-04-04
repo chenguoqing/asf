@@ -1,7 +1,8 @@
 package com.baidu.asf.util;
 
+import com.baidu.asf.ASFException;
+
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 
@@ -32,10 +33,8 @@ public class ByteArrayObjectLoader<T> implements ObjectLazyLoader<T> {
                     try {
                         ObjectInput objectInput = new ObjectInputStream(bin);
                         obj = (T) objectInput.readObject();
-                    } catch (IOException e) {
-                        throw new ObjectConstructException(e);
-                    } catch (ClassNotFoundException e) {
-                        throw new ObjectConstructException(e);
+                    } catch (Exception e) {
+                        throw new ASFException("Failed deserialize object from byte array.", e);
                     }
                 }
             }

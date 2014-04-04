@@ -11,13 +11,13 @@ public class TransitionEntity extends Entity {
      */
     private long instanceId;
     /**
-     * From act id
+     * From node full id
      */
-    private String fromActFullId;
+    private String sourceRef;
     /**
-     * To act id
+     * Target node full id
      */
-    private String toActFullId;
+    private String targetRef;
     /**
      * Whether the flow is virtual?
      */
@@ -27,7 +27,7 @@ public class TransitionEntity extends Entity {
      */
     private ActType fromActType;
     /**
-     * Dest fromNodeId's type
+     * Dest sourceRef's type
      */
     private ActType toActType;
 
@@ -39,20 +39,20 @@ public class TransitionEntity extends Entity {
         this.instanceId = instanceId;
     }
 
-    public String getFromActFullId() {
-        return fromActFullId;
+    public String getSourceRef() {
+        return sourceRef;
     }
 
-    public void setFromActFullId(String fromActFullId) {
-        this.fromActFullId = fromActFullId;
+    public void setSourceRef(String sourceRef) {
+        this.sourceRef = sourceRef;
     }
 
-    public String getToActFullId() {
-        return toActFullId;
+    public String getTargetRef() {
+        return targetRef;
     }
 
-    public void setToActFullId(String toActFullId) {
-        this.toActFullId = toActFullId;
+    public void setTargetRef(String targetRef) {
+        this.targetRef = targetRef;
     }
 
     public boolean isVirtualFlow() {

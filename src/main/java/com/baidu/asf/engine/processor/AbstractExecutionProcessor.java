@@ -38,9 +38,9 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
         // save transition history
         TransitionEntity transitionEntity = new TransitionEntity();
         transitionEntity.setInstanceId(context.getInstance().getId());
-        transitionEntity.setFromActFullId(from.getFullId());
+        transitionEntity.setSourceRef(from.getFullId());
         transitionEntity.setFromActType(from.getType());
-        transitionEntity.setToActFullId(node.getFullId());
+        transitionEntity.setTargetRef(node.getFullId());
         transitionEntity.setToActType(node.getType());
         transitionEntity.setVirtualFlow(flow.isVirtual());
 
@@ -48,7 +48,7 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
     }
 
     /**
-     * Leaves current fromNodeId with mode
+     * Leaves current sourceRef with mode
      */
     protected void doExclusiveLeave(ProcessorContext context, Node node) {
         Map<Flow, Node> successors = node.getSuccessors();

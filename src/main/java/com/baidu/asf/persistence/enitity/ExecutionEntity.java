@@ -11,11 +11,11 @@ public class ExecutionEntity extends Entity {
      */
     private long instanceId;
     /**
-     * Node fromNodeId id
+     * Node sourceRef id
      */
     private String nodeFullId;
     /**
-     * Current fromNodeId type
+     * Current sourceRef type
      */
     private ActType actType;
     /**

@@ -10,7 +10,7 @@ import com.baidu.asf.model.Node;
  */
 public interface ExecutionProcessor {
     /**
-     * The method will be invoked when flows incoming to current fromNodeId
+     * The method will be invoked when flows incoming to current sourceRef
      *
      * @param context processor context
      * @param node    current node
@@ -20,7 +20,7 @@ public interface ExecutionProcessor {
     void doIncoming(ProcessorContext context, Node node, Node from, Flow flow);
 
     /**
-     * The method will be invoked when leaving current fromNodeId
+     * The method will be invoked when leaving current sourceRef
      *
      * @param context processor context
      * @param node    current node

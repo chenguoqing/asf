@@ -57,12 +57,12 @@ public interface ASFInstance extends VariableContext, SystemVariableContext {
     List<ExecutionPath> getExecutionPath();
 
     /**
-     * Transit the flow to fromNodeId fromNodeId,all outgoing flows will be evaluated, one of true will be selected.
+     * Transit the flow to sourceRef sourceRef,all outgoing flows will be evaluated, one of true will be selected.
      */
     void complete(long executionTaskId);
 
     /**
-     * Transit the flow to fromNodeId fromNodeId,all outgoing flows will be evaluated, one of true will be selected.
+     * Transit the flow to sourceRef sourceRef,all outgoing flows will be evaluated, one of true will be selected.
      *
      * @param variables initial variables
      */

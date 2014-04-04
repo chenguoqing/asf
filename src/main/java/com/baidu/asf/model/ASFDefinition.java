@@ -3,7 +3,7 @@ package com.baidu.asf.model;
 import java.util.Map;
 
 /**
- * Adverse state flow  definition
+ * {@link ASFDefinition} represents a process definition interface,the interface is readonly for users
  */
 public interface ASFDefinition {
     /**

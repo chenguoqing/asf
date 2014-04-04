@@ -5,20 +5,29 @@ package com.baidu.asf.engine;
  * it can back the path until to the StartEvent. That can be used to draw flow graph.
  */
 public class ExecutionPath {
-    public final String fromNodeId;
-    public final String targetNodeId;
+    /**
+     * Source node full id
+     */
+    public final String sourceRef;
+    /**
+     * Target node full id
+     */
+    public final String targetRef;
+    /**
+     * Virtual flow?
+     */
     public final boolean virtual;
 
     public ExecutionPath(String fromNodeId, String targetNodeId, boolean virtual) {
-        this.fromNodeId = fromNodeId;
-        this.targetNodeId = targetNodeId;
+        this.sourceRef = fromNodeId;
+        this.targetRef = targetNodeId;
         this.virtual = virtual;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("(").append(fromNodeId).append("---->").append(targetNodeId).append(")");
+        sb.append("(").append(sourceRef).append("---->").append(targetRef).append(")");
         return sb.toString();
     }
 }

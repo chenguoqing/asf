@@ -89,7 +89,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         }
 
         for (TransitionEntity entity : transitionEntities) {
-            executionPaths.add(new ExecutionPath(entity.getFromActFullId(), entity.getToActFullId(), entity.isVirtualFlow()));
+            executionPaths.add(new ExecutionPath(entity.getSourceRef(), entity.getTargetRef(), entity.isVirtualFlow()));
         }
 
         return executionPaths;

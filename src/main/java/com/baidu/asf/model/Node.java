@@ -62,12 +62,12 @@ public interface Node {
     void setParent(Node parent);
 
     /**
-     * If current fromNodeId is within sub doOutgoing, the parent fromNodeId should be the SubProcess,otherwise, return null
+     * If current sourceRef is within sub doOutgoing, the parent sourceRef should be the SubProcess,otherwise, return null
      */
     Node getParent();
 
     /**
-     * Full path is the split with "/",each of entry of "/" is parent fromNodeId id
+     * Full path is the split with "/",each of entry of "/" is parent sourceRef id
      */
     String getFullId();
 
@@ -75,7 +75,7 @@ public interface Node {
      * Add successor
      *
      * @param flow      connected flow
-     * @param successor successor fromNodeId
+     * @param successor successor sourceRef
      */
     void addSuccessor(Flow flow, Node successor);
 
@@ -85,7 +85,7 @@ public interface Node {
     Map<Flow, Node> getSuccessors();
 
     /**
-     * Add a predecessor fromNodeId
+     * Add a predecessor sourceRef
      */
     void addPredecessor(Flow flow, Node predecessor);
 
