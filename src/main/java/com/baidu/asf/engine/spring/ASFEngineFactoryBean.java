@@ -35,7 +35,7 @@ public class ASFEngineFactoryBean extends AbstractFactoryBean<ASFEngineFactoryBe
     @Override
     protected SpringASFEngineProxy createInstance() throws Exception {
         XMLDefinition definition = new XMLDefinition(definitionResource.getURL().getFile(),
-                definitionResource.getInputStream());
+                definitionResource.getInputStream(), engineConfiguration);
         return new SpringASFEngineProxy(definition, engineConfiguration.buildEngine());
     }
 

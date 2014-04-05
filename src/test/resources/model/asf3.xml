@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process id="testASF1" description="test description" version="1">
+<process id="testASF3" description="test description" version="1">
     <startEvent id="theStart"/>
 
     <sequenceFlow sourceRef="theStart" targetRef="LogIssue"/>
@@ -12,7 +12,7 @@
     <sequenceFlow sourceRef="LogIssue" targetRef="forkGateway"/>
 
     <parallelGateway id="forkGateway">
-        <listener ref="commonLogListener"/>
+        <listener class="com.baidu.asf.model.CommonLogListener"/>
     </parallelGateway>
 
     <sequenceFlow sourceRef="forkGateway" targetRef="testLog"/>

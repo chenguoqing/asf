@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process id="testASF1" description="test description" version="1">
+<process id="testASF4" description="test description" version="1">
     <startEvent id="theStart"/>
 
     <sequenceFlow sourceRef="theStart" targetRef="LogIssue"/>
@@ -54,8 +54,24 @@
             <listener class="com.baidu.asf.model.CommonLogListener"/>
         </serviceTask>
 
-        <sequenceFlow sourceRef="DeveloperReady" targetRef="theEndDeveloperSubProcess"/>
-        <endEvent id="theEndDeveloperSubProcess"/>
+        <sequenceFlow sourceRef="DeveloperReady" targetRef="developingProcess"/>
+
+        <subProcess id="developingProcess">
+            <startEvent id="developingStart">
+                <listener ref="commonLogListener"/>
+            </startEvent>
+            <sequenceFlow sourceRef="developingStart" targetRef="rdCoding"/>
+            <serviceTask id="rdCoding">
+                <listener ref="commonLogListener"/>
+            </serviceTask>
+            <sequenceFlow sourceRef="rdCoding" targetRef="developingEnd"/>
+            <endEvent id="developingEnd">
+                <listener ref="commonLogListener"/>
+            </endEvent>
+        </subProcess>
+
+        <sequenceFlow sourceRef="developingProcess" targetRef="subEnd"/>
+        <endEvent id="subEnd"/>
     </subProcess>
 
     <sequenceFlow sourceRef="testLog" targetRef="joinGateway"/>

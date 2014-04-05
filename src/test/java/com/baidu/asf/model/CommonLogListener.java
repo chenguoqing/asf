@@ -2,10 +2,9 @@ package com.baidu.asf.model;
 
 import com.baidu.asf.engine.ExecutionEvent;
 import com.baidu.asf.engine.ExecutionListener;
+import org.springframework.stereotype.Component;
 
-/**
- * Created by chenguoqing01 on 14-3-24.
- */
+@Component("commonLogListener")
 public class CommonLogListener implements ExecutionListener {
     @Override
     public void onNode(ExecutionEvent event) {

@@ -8,12 +8,26 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="attType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[^/ ]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="versionType">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- node type -->
     <xs:complexType name="nodeType">
         <xs:sequence>
             <xs:element name="listener" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
-                    <xs:attribute type="xs:string" name="class" use="required"/>
+                    <xs:attribute type="attType" name="class" use="optional"/>
+                    <xs:attribute type="attType" name="ref" use="optional"/>
+                    <xs:attribute type="attType" name="refByType" use="optional"/>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
@@ -31,8 +45,8 @@
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
-        <xs:attribute type="xs:string" name="sourceRef" use="required"/>
-        <xs:attribute type="xs:string" name="targetRef" use="required"/>
+        <xs:attribute type="attType" name="sourceRef" use="required"/>
+        <xs:attribute type="attType" name="targetRef" use="required"/>
     </xs:complexType>
 
     <xs:group name="baseElementGroup">
@@ -43,20 +57,28 @@
             <xs:element name="parallelGateway" type="nodeType"/>
             <xs:element name="exclusiveGateway" type="nodeType"/>
             <xs:element name="inclusiveGateway" type="nodeType"/>
-            <xs:element name="subProcess" type="processType"/>
+            <xs:element name="subProcess" type="subProcessType"/>
         </xs:choice>
     </xs:group>
-    <!-- sub process type -->
-    <xs:complexType name="processType">
+
+    <xs:complexType name="subProcessType">
         <xs:sequence minOccurs="1">
             <xs:element name="startEvent" type="nodeType" minOccurs="1" maxOccurs="1"/>
             <!-- start event -->
             <xs:group ref="baseElementGroup" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element name="endEvent" type="nodeType" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
-        <xs:attribute type="xs:string" name="id" use="required"/>
+        <xs:attribute type="idType" name="id" use="required"/>
         <xs:attribute type="xs:string" name="description"/>
-        <xs:attribute type="xs:int" name="version" use="optional"/>
+    </xs:complexType>
+
+    <!-- sub process type -->
+    <xs:complexType name="processType">
+        <xs:complexContent>
+            <xs:extension base="subProcessType">
+                <xs:attribute type="versionType" name="version" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:element name="process" type="processType"/>

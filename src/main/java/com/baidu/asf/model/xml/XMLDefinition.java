@@ -1,6 +1,7 @@
 package com.baidu.asf.model.xml;
 
 import com.baidu.asf.ASFException;
+import com.baidu.asf.engine.ASFEngineConfiguration;
 import com.baidu.asf.expression.JEXLConditionExpression;
 import com.baidu.asf.model.*;
 import org.apache.commons.digester3.Digester;
@@ -33,15 +34,21 @@ public class XMLDefinition extends AbstractASFDefinition {
     private static final String ELEMENT_CONDITION = "conditionExpression";
     private static final String ELEMENT_SUBPROCESS = "subProcess";
     private static final String ELEMENT_LISTENER = "listener";
+    private static final String ATTR_CLASS = "class";
+    private static final String ATTR_REF = "ref";
+    private static final String ATTR_REF_TYE = "refType";
+
+    private ASFEngineConfiguration configuration;
 
     /**
      * Constructor with validate
      */
-    public XMLDefinition(String resourcePath, InputStream definitionResource) {
-        if (definitionResource == null) {
+    public XMLDefinition(String resourcePath, InputStream resource, ASFEngineConfiguration configuration) {
+        if (resource == null || configuration == null) {
             throw new IllegalArgumentException();
         }
-        build(resourcePath, definitionResource);
+        this.configuration = configuration;
+        build(resourcePath, resource);
     }
 
     /**
@@ -51,10 +58,10 @@ public class XMLDefinition extends AbstractASFDefinition {
         setParent(parent);
     }
 
-    private void build(String resourcePath, InputStream definitionResource) {
+    private void build(String resourcePath, InputStream resource) {
         try {
             // parse xml stream to model
-            parseModel(definitionResource);
+            parseModel(resource);
             // build and validate model
             buildDefinition();
         } catch (IOException e) {
@@ -63,7 +70,7 @@ public class XMLDefinition extends AbstractASFDefinition {
             throw new ASFModelException("Failed to parse xml resource:" + resourcePath, e);
         } finally {
             try {
-                definitionResource.close();
+                resource.close();
             } catch (IOException e) {
                 throw new ASFException("Failed to close file:" + resourcePath);
             }
@@ -112,7 +119,7 @@ public class XMLDefinition extends AbstractASFDefinition {
         }
 
         final String listenerRule = nodeRule + "/" + ELEMENT_LISTENER;
-        digester.addObjectCreate(listenerRule, null, "class");
+        digester.addRule(listenerRule, new ListenerCreateRule(configuration));
         digester.addSetNext(listenerRule, "addExecutionListener");
     }
 
@@ -156,6 +163,45 @@ public class XMLDefinition extends AbstractASFDefinition {
         @Override
         public void end(String namespace, String name) throws Exception {
             getDigester().pop();
+        }
+    }
+
+    static class ListenerCreateRule extends Rule {
+        final ASFEngineConfiguration configuration;
+
+        ObjectCreateRule createRule;
+
+        ListenerCreateRule(ASFEngineConfiguration configuration) {
+            this.configuration = configuration;
+        }
+
+        @Override
+        public void begin(String namespace, String name, Attributes attributes) throws Exception {
+            String classAttr = attributes.getValue(ATTR_CLASS);
+            String ref = attributes.getValue(ATTR_REF);
+            String refType = attributes.getValue(ATTR_REF_TYE);
+
+            if (classAttr != null) {
+                this.createRule = new ObjectCreateRule(null, ATTR_CLASS);
+                this.createRule.setDigester(getDigester());
+                createRule.begin(namespace, name, attributes);
+            } else if (ref != null) {
+                getDigester().push(configuration.getRefObject(ref));
+            } else if (refType != null) {
+                Class<?> clazz = getDigester().getClassLoader().loadClass(refType);
+                getDigester().push(configuration.getRefObject(clazz));
+            } else {
+                throw new SAXException("The listener element must have class or ref attribute.");
+            }
+        }
+
+        @Override
+        public void end(String namespace, String name) throws Exception {
+            if (createRule != null) {
+                this.createRule.end(namespace, name);
+            } else {
+                getDigester().pop();
+            }
         }
     }
 }
