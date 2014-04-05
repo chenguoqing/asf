@@ -54,7 +54,7 @@ public interface Node {
     /**
      * Element type
      */
-    ActType getType();
+    NodeType getType();
 
     /**
      * Set parent

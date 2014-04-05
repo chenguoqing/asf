@@ -15,6 +15,6 @@ package com.baidu.asf.model;
  */
 public class ParallelGateway extends AbstractNode implements Gateway {
     public ParallelGateway() {
-        setActType(ActType.ParallelGateway);
+        setActType(NodeType.ParallelGateway);
     }
 }

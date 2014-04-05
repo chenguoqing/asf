@@ -224,7 +224,7 @@ public abstract class AbstractASFDefinition implements ASFDefinition {
         caches.remove(node.getId());
 
         for (Node successor : node.getSuccessors().values()) {
-            if (successor.getType() == ActType.SubProcess) {
+            if (successor.getType() == NodeType.SubProcess) {
                 SubProcess subProcess = (SubProcess) successor;
                 ((AbstractASFDefinition) subProcess.getSubProcessDefinition()).buildDefinition();
             }

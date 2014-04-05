@@ -5,11 +5,11 @@ package com.baidu.asf.model;
  */
 public class StartEvent extends AbstractNode implements Event {
     public StartEvent() {
-        setActType(ActType.StartEvent);
+        setActType(NodeType.StartEvent);
     }
 
     public StartEvent(Node parent) {
-        setActType(ActType.StartEvent);
+        setActType(NodeType.StartEvent);
         setParent(parent);
     }
 }

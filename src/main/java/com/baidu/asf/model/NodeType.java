@@ -3,7 +3,7 @@ package com.baidu.asf.model;
 /**
  * All element types which can be defined on doOutgoing graph
  */
-public enum ActType {
+public enum NodeType {
     Flow(0),
     Message(1),
     StartEvent(2),
@@ -18,11 +18,11 @@ public enum ActType {
 
     public final int type;
 
-    ActType(int type) {
+    NodeType(int type) {
         this.type = type;
     }
 
-    public static ActType get(int type) {
+    public static NodeType get(int type) {
         if (type < Flow.type || type >= values().length) {
             throw new IllegalArgumentException("Invalidate type:" + type);
         }

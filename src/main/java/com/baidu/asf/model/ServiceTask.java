@@ -5,11 +5,11 @@ package com.baidu.asf.model;
  */
 public class ServiceTask extends AbstractNode implements Task {
     public ServiceTask() {
-        setActType(ActType.ServiceTask);
+        setActType(NodeType.ServiceTask);
     }
 
     public ServiceTask(Node parent) {
-        setActType(ActType.ServiceTask);
+        setActType(NodeType.ServiceTask);
         setParent(parent);
     }
 }

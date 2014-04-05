@@ -5,6 +5,6 @@ package com.baidu.asf.model;
  */
 public class ExclusiveGateway extends AbstractNode implements Gateway {
     public ExclusiveGateway() {
-        setActType(ActType.ExclusiveGateway);
+        setActType(NodeType.ExclusiveGateway);
     }
 }

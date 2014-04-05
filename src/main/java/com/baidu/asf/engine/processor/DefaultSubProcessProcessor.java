@@ -38,7 +38,7 @@ public class DefaultSubProcessProcessor extends AbstractExecutionProcessor imple
 
     @Override
     public void startSubProcess(SubProcess subProcess, ProcessorContext subContext) {
-        ExecutionProcessor startEventProcessor = ExecutionProcessorRegister.getProcessor(ActType.StartEvent);
+        ExecutionProcessor startEventProcessor = ExecutionProcessorRegister.getProcessor(NodeType.StartEvent);
         StartEvent startEvent = subProcess.getSubProcessDefinition().getStartEvent();
         Flow flow = new SequenceFlow(subProcess.getFullId(), startEvent.getFullId());
         startEventProcessor.doIncoming(subContext, startEvent, subProcess, flow);

@@ -5,6 +5,6 @@ package com.baidu.asf.model;
  */
 public class EndEvent extends AbstractNode implements Event {
     public EndEvent() {
-        setActType(ActType.EndEvent);
+        setActType(NodeType.EndEvent);
     }
 }

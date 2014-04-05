@@ -4,7 +4,7 @@ import com.baidu.asf.ASFException;
 import com.baidu.asf.engine.processor.ExecutionProcessor;
 import com.baidu.asf.engine.processor.ExecutionProcessorRegister;
 import com.baidu.asf.model.ASFDefinition;
-import com.baidu.asf.model.ActType;
+import com.baidu.asf.model.NodeType;
 import com.baidu.asf.persistence.EntityManager;
 import com.baidu.asf.persistence.enitity.InstanceEntity;
 
@@ -45,7 +45,7 @@ public class ASFEngineImpl implements ASFEngine {
         context.setInstance(instance);
 
         // start process
-        ExecutionProcessor processor = ExecutionProcessorRegister.getProcessor(ActType.StartEvent);
+        ExecutionProcessor processor = ExecutionProcessorRegister.getProcessor(NodeType.StartEvent);
         processor.doOutgoing(context, definition.getStartEvent());
 
         return instance;

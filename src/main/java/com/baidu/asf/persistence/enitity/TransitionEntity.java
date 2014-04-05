@@ -1,6 +1,6 @@
 package com.baidu.asf.persistence.enitity;
 
-import com.baidu.asf.model.ActType;
+import com.baidu.asf.model.NodeType;
 
 /**
  * Transition entity
@@ -25,11 +25,11 @@ public class TransitionEntity extends Entity {
     /**
      * From act type
      */
-    private ActType fromActType;
+    private NodeType sourceNodeType;
     /**
      * Dest sourceRef's type
      */
-    private ActType toActType;
+    private NodeType targetNodeType;
 
     public long getInstanceId() {
         return instanceId;
@@ -63,19 +63,19 @@ public class TransitionEntity extends Entity {
         this.isVirtualFlow = isVirtualFlow;
     }
 
-    public ActType getFromActType() {
-        return fromActType;
+    public NodeType getSourceNodeType() {
+        return sourceNodeType;
     }
 
-    public void setFromActType(ActType fromActType) {
-        this.fromActType = fromActType;
+    public void setSourceNodeType(NodeType sourceNodeType) {
+        this.sourceNodeType = sourceNodeType;
     }
 
-    public ActType getToActType() {
-        return toActType;
+    public NodeType getTargetNodeType() {
+        return targetNodeType;
     }
 
-    public void setToActType(ActType toActType) {
-        this.toActType = toActType;
+    public void setTargetNodeType(NodeType targetNodeType) {
+        this.targetNodeType = targetNodeType;
     }
 }

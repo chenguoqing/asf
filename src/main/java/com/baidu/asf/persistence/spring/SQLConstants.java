@@ -33,13 +33,13 @@ public class SQLConstants {
     /**
      * ASF create execution
      */
-    public static final String ASF_CREATE_EXECUTION = "INSERT INTO ASF_EXECUTION (INSTANCE_ID_,ACT_FULL_ID_," +
-            "ACT_TYPE_,GMT_CREATE,GMT_MODIFIED)VALUES(?,?,?,SYSDATE(),SYSDATE())";
+    public static final String ASF_CREATE_EXECUTION = "INSERT INTO ASF_EXECUTION (INSTANCE_ID_,NODE_FULL_ID_," +
+            "NODE_TYPE_,GMT_CREATE,GMT_MODIFIED)VALUES(?,?,?,SYSDATE(),SYSDATE())";
 
     /**
      * Load execution entity
      */
-    public static final String ASF_LOAD_EXECUTION = "SELECT ID_,INSTANCE_ID_,ACT_FULL_ID_,ACT_TYPE_,GMT_CREATE," +
+    public static final String ASF_LOAD_EXECUTION = "SELECT ID_,INSTANCE_ID_,NODE_FULL_ID_,NODE_TYPE_,GMT_CREATE," +
             "GMT_MODIFIED FROM ASF_EXECUTION WHERE ID_=?";
 
     /**
@@ -53,20 +53,20 @@ public class SQLConstants {
     /**
      * Load execution entity
      */
-    public static final String ASF_FIND_EXECUTIONS = "SELECT ID_,INSTANCE_ID_,ACT_FULL_ID_,ACT_TYPE_,GMT_CREATE," +
+    public static final String ASF_FIND_EXECUTIONS = "SELECT ID_,INSTANCE_ID_,NODE_FULL_ID_,NODE_TYPE_,GMT_CREATE," +
             "GMT_MODIFIED FROM ASF_EXECUTION WHERE INSTANCE_ID_=?";
 
     /**
      * Create transition entity
      */
-    public static final String ASF_CREATE_TRANSITION = "INSERT INTO ASF_TRANSITION(INSTANCE_ID_,FROM_ACT_FULL_ID_," +
-            "TO_ACT_FULL_ID_,FLOW_VIRTUAL_,FROM_ACT_TYPE_,TO_ACT_TYPE_,GMT_CREATE,GMT_MODIFIED)VALUES(?,?,?," +
+    public static final String ASF_CREATE_TRANSITION = "INSERT INTO ASF_TRANSITION(INSTANCE_ID_,SOURCE_REF_," +
+            "TARGET_REF_,FLOW_VIRTUAL_,SOURCE_NODE_TYPE_,TARGET_NODE_TYPE_,GMT_CREATE,GMT_MODIFIED)VALUES(?,?,?," +
             "?,?,?,SYSDATE(),SYSDATE())";
     /**
      * Query all transitions for instance
      */
-    public static final String ASF_FIND_TRANSITIONS = "SELECT ID_,INSTANCE_ID_,FROM_ACT_FULL_ID_,TO_ACT_FULL_ID_," +
-            "FLOW_VIRTUAL_,FROM_ACT_TYPE_,TO_ACT_TYPE_,GMT_CREATE,GMT_MODIFIED FROM ASF_TRANSITION WHERE " +
+    public static final String ASF_FIND_TRANSITIONS = "SELECT ID_,INSTANCE_ID_,SOURCE_REF_,TARGET_REF_," +
+            "FLOW_VIRTUAL_,SOURCE_NODE_TYPE_,TARGET_NODE_TYPE_,GMT_CREATE,GMT_MODIFIED FROM ASF_TRANSITION WHERE " +
             "INSTANCE_ID_=?";
 
     /**

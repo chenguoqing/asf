@@ -39,9 +39,9 @@ public abstract class AbstractExecutionProcessor implements ExecutionProcessor {
         TransitionEntity transitionEntity = new TransitionEntity();
         transitionEntity.setInstanceId(context.getInstance().getId());
         transitionEntity.setSourceRef(from.getFullId());
-        transitionEntity.setFromActType(from.getType());
+        transitionEntity.setSourceNodeType(from.getType());
         transitionEntity.setTargetRef(node.getFullId());
-        transitionEntity.setToActType(node.getType());
+        transitionEntity.setTargetNodeType(node.getType());
         transitionEntity.setVirtualFlow(flow.isVirtual());
 
         context.getEntityManager().createTransition(transitionEntity);

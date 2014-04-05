@@ -1,6 +1,6 @@
 package com.baidu.asf.persistence.enitity;
 
-import com.baidu.asf.model.ActType;
+import com.baidu.asf.model.NodeType;
 
 /**
  * Process execution entity
@@ -17,7 +17,7 @@ public class ExecutionEntity extends Entity {
     /**
      * Current sourceRef type
      */
-    private ActType actType;
+    private NodeType nodeType;
     /**
      * Parent act id path("/" split)
      */
@@ -38,11 +38,11 @@ public class ExecutionEntity extends Entity {
         this.nodeFullId = nodeFullId;
     }
 
-    public ActType getActType() {
-        return actType;
+    public NodeType getNodeType() {
+        return nodeType;
     }
 
-    public void setActType(ActType actType) {
-        this.actType = actType;
+    public void setNodeType(NodeType nodeType) {
+        this.nodeType = nodeType;
     }
 }

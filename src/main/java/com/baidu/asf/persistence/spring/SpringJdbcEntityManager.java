@@ -1,6 +1,6 @@
 package com.baidu.asf.persistence.spring;
 
-import com.baidu.asf.model.ActType;
+import com.baidu.asf.model.NodeType;
 import com.baidu.asf.persistence.ASFPersistenceException;
 import com.baidu.asf.persistence.EntityManager;
 import com.baidu.asf.persistence.EntityNotFoundException;
@@ -72,7 +72,7 @@ public class SpringJdbcEntityManager implements EntityManager {
             entity.setId(rowSet.getInt(1));
             entity.setInstanceId(rowSet.getLong(2));
             entity.setNodeFullId(rowSet.getString(3));
-            entity.setActType(ActType.get(rowSet.getInt(4)));
+            entity.setNodeType(NodeType.get(rowSet.getInt(4)));
             entity.setCreated(rowSet.getTimestamp(5));
             entity.setModified(rowSet.getTimestamp(6));
         }
@@ -237,7 +237,7 @@ public class SpringJdbcEntityManager implements EntityManager {
             public void setPreparedStatement(PreparedStatement statement, ExecutionEntity entity) throws SQLException {
                 statement.setLong(1, executionEntity.getInstanceId());
                 statement.setString(2, executionEntity.getNodeFullId());
-                statement.setInt(3, executionEntity.getActType().type);
+                statement.setInt(3, executionEntity.getNodeType().type);
             }
         });
     }
@@ -286,8 +286,8 @@ public class SpringJdbcEntityManager implements EntityManager {
                 statement.setString(2, transitionEntity.getSourceRef());
                 statement.setString(3, transitionEntity.getTargetRef());
                 statement.setInt(4, transitionEntity.isVirtualFlow() ? 1 : 0);
-                statement.setInt(5, transitionEntity.getFromActType().type);
-                statement.setInt(6, transitionEntity.getToActType().type);
+                statement.setInt(5, transitionEntity.getSourceNodeType().type);
+                statement.setInt(6, transitionEntity.getTargetNodeType().type);
             }
         });
     }
@@ -302,8 +302,8 @@ public class SpringJdbcEntityManager implements EntityManager {
                 entity.setSourceRef(rowSet.getString(3));
                 entity.setTargetRef(rowSet.getString(4));
                 entity.setVirtualFlow(rowSet.getInt(5) == 1);
-                entity.setFromActType(ActType.get(rowSet.getInt(6)));
-                entity.setToActType(ActType.get(rowSet.getInt(7)));
+                entity.setSourceNodeType(NodeType.get(rowSet.getInt(6)));
+                entity.setTargetNodeType(NodeType.get(rowSet.getInt(7)));
             }
         }, instanceId);
     }

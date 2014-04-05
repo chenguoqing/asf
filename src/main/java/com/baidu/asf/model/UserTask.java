@@ -5,6 +5,6 @@ package com.baidu.asf.model;
  */
 public class UserTask extends AbstractNode implements Task {
     public UserTask() {
-        setActType(ActType.UserTask);
+        setActType(NodeType.UserTask);
     }
 }

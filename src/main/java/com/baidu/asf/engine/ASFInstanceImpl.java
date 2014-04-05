@@ -4,7 +4,7 @@ import com.baidu.asf.ASFException;
 import com.baidu.asf.engine.processor.ExecutionProcessor;
 import com.baidu.asf.engine.processor.ExecutionProcessorRegister;
 import com.baidu.asf.model.ASFDefinition;
-import com.baidu.asf.model.ActType;
+import com.baidu.asf.model.NodeType;
 import com.baidu.asf.model.UserTask;
 import com.baidu.asf.persistence.EntityManager;
 import com.baidu.asf.persistence.enitity.ExecutionEntity;
@@ -117,7 +117,7 @@ public class ASFInstanceImpl extends AbstractVariableContext implements ASFInsta
         context.setEntityManager(entityManager);
         context.setExecutionTaskId(executionTaskId);
 
-        ExecutionProcessor processor = ExecutionProcessorRegister.getProcessor(ActType.UserTask);
+        ExecutionProcessor processor = ExecutionProcessorRegister.getProcessor(NodeType.UserTask);
         processor.doOutgoing(context, userTask);
     }
 

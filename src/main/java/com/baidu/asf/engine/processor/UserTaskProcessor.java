@@ -1,7 +1,7 @@
 package com.baidu.asf.engine.processor;
 
 import com.baidu.asf.engine.ProcessorContext;
-import com.baidu.asf.model.ActType;
+import com.baidu.asf.model.NodeType;
 import com.baidu.asf.model.Flow;
 import com.baidu.asf.model.Node;
 import com.baidu.asf.persistence.enitity.ExecutionEntity;
@@ -17,7 +17,7 @@ public class UserTaskProcessor extends AbstractExecutionProcessor {
         // Create user task execution
         ExecutionEntity entity = new ExecutionEntity();
         entity.setNodeFullId(node.getFullId());
-        entity.setActType(ActType.UserTask);
+        entity.setNodeType(NodeType.UserTask);
         entity.setInstanceId(context.getInstance().getId());
 
         context.getEntityManager().createExecution(entity);

@@ -13,7 +13,7 @@ import java.util.Map;
 public abstract class AbstractNode implements Node {
     private ASFDefinition definition;
     private String id;
-    private ActType actType;
+    private NodeType actType;
     private String name;
     private String description;
     protected Node parent;
@@ -60,12 +60,12 @@ public abstract class AbstractNode implements Node {
         return description;
     }
 
-    public void setActType(ActType actType) {
+    public void setActType(NodeType actType) {
         this.actType = actType;
     }
 
     @Override
-    public ActType getType() {
+    public NodeType getType() {
         return actType;
     }
 

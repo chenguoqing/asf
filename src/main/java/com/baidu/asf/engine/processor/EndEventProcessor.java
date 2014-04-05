@@ -3,7 +3,7 @@ package com.baidu.asf.engine.processor;
 import com.baidu.asf.engine.ASFInstance;
 import com.baidu.asf.engine.ASFInstanceImpl;
 import com.baidu.asf.engine.ProcessorContext;
-import com.baidu.asf.model.ActType;
+import com.baidu.asf.model.NodeType;
 import com.baidu.asf.model.Flow;
 import com.baidu.asf.model.Node;
 
@@ -42,7 +42,7 @@ public class EndEventProcessor extends AbstractExecutionProcessor {
     public void doOutgoing(ProcessorContext context, Node node) {
         // only the sub process sourceRef can be processed
         if (node.getParent() != null) {
-            SubProcessProcessor processor = (SubProcessProcessor) ExecutionProcessorRegister.getProcessor(ActType.SubProcess);
+            SubProcessProcessor processor = (SubProcessProcessor) ExecutionProcessorRegister.getProcessor(NodeType.SubProcess);
             processor.endSubProcess(context);
         }
     }
